@@ -207,7 +207,7 @@ else:
                         
                         # 3. 組成專屬連結 (抓取目前網頁的主網址)
                         # 在 Cloudflare 或 Streamlit 上會自動帶入域名
-                        base_url = "http://localhost:8501" # 正式上線時替換為你的實際網址
+                        base_url = "https://hr-quiz-6bya8ipfvrzg8c2zwfj2m2.streamlit.app"
                         quiz_url = f"{base_url}/?test={token}"
                         
                         st.subheader("📋 產生成功的測驗連結：")
