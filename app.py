@@ -26,7 +26,6 @@ def init_sqlite_db():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS tests (
             test_id TEXT PRIMARY KEY,
-            cand_id TEXT,
             name TEXT,
             dept TEXT,
             exam_type TEXT,
@@ -40,7 +39,6 @@ def init_sqlite_db():
         CREATE TABLE IF NOT EXISTS results (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             test_id TEXT,
-            cand_id TEXT,
             name TEXT,
             dept TEXT,
             exam_type TEXT,
@@ -63,18 +61,18 @@ def get_test_by_id(test_id):
     conn.close()
     return dict(row) if row else None
 
-def save_new_test(test_id, cand_id, name, dept, exam_type):
+def save_new_test(test_id, name, dept, exam_type):
     """新增測驗派發紀錄"""
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO tests (test_id, cand_id, name, dept, exam_type, created_time, status)
+        INSERT INTO tests (test_id, name, dept, exam_type, created_time, status)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     ''', (test_id, cand_id, name, dept, exam_type, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "未完成"))
     conn.commit()
     conn.close()
 
-def mark_test_completed_and_save_result(test_id, cand_id, name, dept, exam_type, score, duration_sec, details_str, cheat_logs):
+def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, duration_sec, details_str, cheat_logs):
     """更新測驗狀態並寫入成績庫"""
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -84,7 +82,7 @@ def mark_test_completed_and_save_result(test_id, cand_id, name, dept, exam_type,
     
     # 2. 寫入詳細成績與行為日誌
     cursor.execute('''
-        INSERT INTO results (test_id, cand_id, name, dept, exam_type, score, submit_time, duration_seconds, details, cheat_logs)
+        INSERT INTO results (test_id, name, dept, exam_type, score, submit_time, duration_seconds, details, cheat_logs)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (test_id, cand_id, name, dept, exam_type, score, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), duration_sec, details_str, cheat_logs))
     
