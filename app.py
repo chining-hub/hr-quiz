@@ -155,7 +155,7 @@ def inject_anti_cheat_script():
 # =========================================================================
 # ⚙️ 3. 頁面設定與路由判斷
 # =========================================================================
-st.set_page_config(page_title="UNITECH 線上測評系統", page_icon="📝", layout="centered")
+st.set_page_config(page_title="線上測評系統", page_icon="📝", layout="centered")
 
 query_params = st.query_params
 current_test_id = query_params.get("test", None)
@@ -180,12 +180,11 @@ if current_test_id:
         with st.sidebar:
             st.header("📋 應試者資訊 (已驗證)")
             st.text_input("姓名", value=cand_name, disabled=True)
-            st.text_input("應徵編號", value=cand_id, disabled=True)
             st.text_input("應徵部門", value=cand_dept, disabled=True)
             st.text_input("測驗科目", value=exam_type, disabled=True)
             st.success("✅ 身分鎖定成功")
 
-        st.title(f"📝 UNITECH {exam_type}")
+        st.title(f"📝 {exam_type}")
         st.caption(f"歡迎應試者 **{cand_name}**（{cand_dept}），請仔細閱讀題目後作答。")
         st.divider()
 
@@ -197,7 +196,6 @@ if current_test_id:
         # ---------------- 防作弊機制 ----------------
         if exam_type == "英文測驗":
             inject_anti_cheat_script()
-            st.info("🔒 本英文測驗已啟用 SVG 向量圖形防翻譯與防複製機制。")
 
         # ---------------- 倒數計時器 (st_autorefresh) ----------------
         is_time_up = False
@@ -301,7 +299,7 @@ if current_test_id:
                     cheat_logs = f"總花費時間: {duration_sec} 秒"
                     
                     mark_test_completed_and_save_result(
-                        current_test_id, cand_id, cand_name, cand_dept, exam_type, 
+                        current_test_id, cand_name, cand_dept, exam_type, 
                         score, duration_sec, details_str, cheat_logs
                     )
                     st.session_state.submitted = True
@@ -314,7 +312,7 @@ if current_test_id:
 # 🔀 情境 B：網址無參數 -> 進入【HR 人資管理後台】
 # -------------------------------------------------------------------------
 else:
-    st.title("🏢 UNITECH 人資測評管理系統")
+    st.title("🏢 人資測評管理系統")
     st.caption("請輸入 HR 密碼以開啟管理功能")
     
     CORRECT_PASSWORD = st.secrets.get("HR_PASSWORD", "hr1234")
