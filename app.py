@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import sqlite3
 import secrets
+import base64
 from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
 
@@ -34,7 +35,7 @@ def init_sqlite_db():
         )
     ''')
     
-    # 建立應試者成績與作弊日誌表
+    # 建立應試者成績與行為日誌表
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS results (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -94,21 +95,28 @@ def mark_test_completed_and_save_result(test_id, cand_id, name, dept, exam_type,
 init_sqlite_db()
 
 # =========================================================================
-# 🛡️ 2. 防複製、防右鍵、防 Google 翻譯雙重模組
+# 🛡️ 2. SVG 向量圖像化（終極 100% 防翻譯）與防右鍵/防複製模組
 # =========================================================================
-def obfuscate_text(text: str) -> str:
+def text_to_svg(text: str, font_size: int = 18, height: int = 35) -> str:
     """
-    在英文字母中間插入零寬不連字字元 (\u200b)
-    肉眼看起來 100% 正常，但 Google 翻譯引擎會無法辨識單字而放棄翻譯！
+    將英文文字動態轉為 Base64 格式的 SVG 向量圖片
+    Google 翻譯與外掛無法辨識圖片內的 HTML 節點，防翻譯成功率 100%！
     """
-    return "\u200b".join(list(text))
+    width = max(int(len(text) * (font_size * 0.68)) + 20, 300)
+    
+    svg_code = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
+        <text x="0" y="{font_size + 2}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="{font_size}px" font-weight="500" fill="#31333F">{text}</text>
+    </svg>'''
+    
+    b64 = base64.b64encode(svg_code.encode('utf-8')).decode('utf-8')
+    return f'<img src="data:image/svg+xml;base64,{b64}" style="vertical-align: middle; display: inline-block; margin: 2px 0;" />'
 
 def inject_anti_cheat_script():
     """注入 JS：強制根目錄防翻譯、防選取與防右鍵"""
     st.markdown(
         """
         <script>
-            // 1. 強制在最頂層 html 與 body 標籤加上防翻譯屬性 (破解 Chrome 內建翻譯)
+            // 1. 強制在最頂層 html 與 body 標籤加上防翻譯屬性
             document.documentElement.setAttribute('translate', 'no');
             document.documentElement.classList.add('notranslate');
             if (document.body) {
@@ -189,7 +197,7 @@ if current_test_id:
         # ---------------- 防作弊機制 ----------------
         if exam_type == "英文測驗":
             inject_anti_cheat_script()
-            st.info("🔒 本英文測驗已啟用根目錄防翻譯與防複製保護機制。")
+            st.info("🔒 本英文測驗已啟用 SVG 向量圖形防翻譯與防複製機制。")
 
         # ---------------- 倒數計時器 (st_autorefresh) ----------------
         is_time_up = False
@@ -215,40 +223,49 @@ if current_test_id:
             st.session_state.submitted = False
 
         if not st.session_state.submitted:
-            st.markdown('<div class="notranslate" translate="no">', unsafe_allow_html=True)
-            
             with st.form("exam_form"):
                 score = 0
                 ans_records = []
                 
                 if exam_type == "英文測驗":
-                    st.subheader(obfuscate_text("Q1. Choose the correct word:"))
-                    q1_prompt = obfuscate_text("The project was completed ____ schedule.")
-                    q1_opts = [obfuscate_text("on"), obfuscate_text("in"), obfuscate_text("at"), obfuscate_text("to")]
-                    q1 = st.radio(q1_prompt, q1_opts)
+                    # Q1 題目 (以 SVG 向量渲染，無法被 Translate 抓取)
+                    st.markdown(text_to_svg("Q1. Choose the correct word:", font_size=20, height=40), unsafe_allow_html=True)
+                    st.markdown(text_to_svg("The project was completed ____ schedule.", font_size=18, height=35), unsafe_allow_html=True)
                     
-                    if q1 and q1.replace("\u200b", "") == "on":
+                    st.markdown(f"""
+                    * **A)** {text_to_svg("on")}
+                    * **B)** {text_to_svg("in")}
+                    * **C)** {text_to_svg("at")}
+                    * **D)** {text_to_svg("to")}
+                    """, unsafe_allow_html=True)
+                    
+                    q1 = st.radio("請選擇 Q1 正確答案：", ["A", "B", "C", "D"], key="q1_radio")
+                    
+                    if q1 == "A":
                         score += 50
-                        ans_records.append("Q1:⭕ (選擇: on)")
+                        ans_records.append("Q1:⭕ (選擇: A. on)")
                     else:
-                        clean_ans = q1.replace("\u200b", "") if q1 else "未作答"
-                        ans_records.append(f"Q1:❌ (選擇: {clean_ans})")
+                        ans_records.append(f"Q1:❌ (選擇: {q1})")
 
-                    st.subheader(obfuscate_text("Q2. Reading Comprehension:"))
-                    q2_prompt = obfuscate_text("What does 'ATS' stand for in modern HR?")
-                    q2_opts = [
-                        obfuscate_text("Applicant Tracking System"), 
-                        obfuscate_text("Automated Testing Service"), 
-                        obfuscate_text("Annual Team Strategy")
-                    ]
-                    q2 = st.radio(q2_prompt, q2_opts)
+                    st.divider()
+
+                    # Q2 題目 (以 SVG 向量渲染)
+                    st.markdown(text_to_svg("Q2. Reading Comprehension:", font_size=20, height=40), unsafe_allow_html=True)
+                    st.markdown(text_to_svg("What does 'ATS' stand for in modern HR?", font_size=18, height=35), unsafe_allow_html=True)
                     
-                    if q2 and q2.replace("\u200b", "") == "Applicant Tracking System":
+                    st.markdown(f"""
+                    * **A)** {text_to_svg("Applicant Tracking System")}
+                    * **B)** {text_to_svg("Automated Testing Service")}
+                    * **C)** {text_to_svg("Annual Team Strategy")}
+                    """, unsafe_allow_html=True)
+                    
+                    q2 = st.radio("請選擇 Q2 正確答案：", ["A", "B", "C"], key="q2_radio")
+                    
+                    if q2 == "A":
                         score += 50
-                        ans_records.append("Q2:⭕ (選擇: ATS)")
+                        ans_records.append("Q2:⭕ (選擇: A. Applicant Tracking System)")
                     else:
-                        clean_ans = q2.replace("\u200b", "") if q2 else "未作答"
-                        ans_records.append(f"Q2:❌ (選擇: {clean_ans})")
+                        ans_records.append(f"Q2:❌ (選擇: {q2})")
 
                 elif exam_type == "數學測驗":
                     st.subheader("Q1. 邏輯運算：")
@@ -281,7 +298,6 @@ if current_test_id:
                     if is_time_up:
                         details_str += " [系統備註: 逾時強制交卷]"
 
-                    # 自動紀錄測驗日誌
                     cheat_logs = f"總花費時間: {duration_sec} 秒"
                     
                     mark_test_completed_and_save_result(
@@ -290,8 +306,6 @@ if current_test_id:
                     )
                     st.session_state.submitted = True
                     st.rerun()
-
-            st.markdown('</div>', unsafe_allow_html=True)
         else:
             st.balloons()
             st.success("🎉 測驗已順利完成！您的成績與作答細節已安全寫入 SQLite 資料庫，可以關閉此網頁。")
@@ -303,9 +317,7 @@ else:
     st.title("🏢 UNITECH 人資測評管理系統")
     st.caption("請輸入 HR 密碼以開啟管理功能")
     
-    # 從 st.secrets 安全讀取密碼，若未設定則自動預設為 hr1234
     CORRECT_PASSWORD = st.secrets.get("HR_PASSWORD", "hr1234")
-    
     hr_password = st.text_input("HR 管理員密碼", type="password")
     
     if hr_password == CORRECT_PASSWORD:
@@ -329,13 +341,9 @@ else:
                 
                 if btn_gen:
                     if c_name and c_id and c_dept:
-                        # 產生 32 碼安全亂數 Token (secrets.token_hex(16))
                         token_32 = secrets.token_hex(16)
-                        
-                        # 寫入 SQLite
                         save_new_test(token_32, c_id, c_name, c_dept, c_exam)
                         
-                        # 產生專屬網址
                         base_url = "https://hr-quiz-6bya8ipfvrzg8c2zwfj2m2.streamlit.app"
                         quiz_url = f"{base_url}/?test={token_32}"
                         
@@ -360,5 +368,4 @@ else:
             conn.close()
                 
     elif hr_password:
-        st.error("密碼錯誤，請重新輸入！")
         st.error("密碼錯誤，請重新輸入！")
