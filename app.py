@@ -7,7 +7,7 @@ from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
 
 # =========================================================================
-# 🗄️ 1. SQLite 資料庫自動建表與讀寫模組
+# 🗄️ 1. SQLite 資料庫自動建表與讀寫模組 (已移除 cand_id)
 # =========================================================================
 DB_NAME = "quiz_database.db"
 
@@ -67,8 +67,8 @@ def save_new_test(test_id, name, dept, exam_type):
     cursor = conn.cursor()
     cursor.execute('''
         INSERT INTO tests (test_id, name, dept, exam_type, created_time, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    ''', (test_id, cand_id, name, dept, exam_type, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "未完成"))
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (test_id, name, dept, exam_type, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "未完成"))
     conn.commit()
     conn.close()
 
@@ -83,8 +83,8 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
     # 2. 寫入詳細成績與行為日誌
     cursor.execute('''
         INSERT INTO results (test_id, name, dept, exam_type, score, submit_time, duration_seconds, details, cheat_logs)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (test_id, cand_id, name, dept, exam_type, score, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), duration_sec, details_str, cheat_logs))
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (test_id, name, dept, exam_type, score, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), duration_sec, details_str, cheat_logs))
     
     conn.commit()
     conn.close()
@@ -153,7 +153,7 @@ def inject_anti_cheat_script():
 # =========================================================================
 # ⚙️ 3. 頁面設定與路由判斷
 # =========================================================================
-st.set_page_config(page_title="線上測評系統", page_icon="📝", layout="centered")
+st.set_page_config(page_title="UNITECH 線上測評系統", page_icon="📝", layout="centered")
 
 query_params = st.query_params
 current_test_id = query_params.get("test", None)
@@ -170,11 +170,10 @@ if current_test_id:
         st.warning("⚠️ 此測驗連結已經交卷完成，無法重複作答！")
     else:
         cand_name = test_info["name"]
-        cand_id = test_info["cand_id"]
         cand_dept = test_info["dept"]
         exam_type = test_info["exam_type"]
         
-        # 側邊欄身分鎖定
+        # 側邊欄身分鎖定 (已移除應徵編號)
         with st.sidebar:
             st.header("📋 應試者資訊 (已驗證)")
             st.text_input("姓名", value=cand_name, disabled=True)
@@ -182,7 +181,7 @@ if current_test_id:
             st.text_input("測驗科目", value=exam_type, disabled=True)
             st.success("✅ 身分鎖定成功")
 
-        st.title(f"📝 {exam_type}")
+        st.title(f"📝 UNITECH {exam_type}")
         st.caption(f"歡迎應試者 **{cand_name}**（{cand_dept}），請仔細閱讀題目後作答。")
         st.divider()
 
@@ -194,16 +193,16 @@ if current_test_id:
         # ---------------- 防作弊機制 ----------------
         if exam_type == "英文測驗":
             inject_anti_cheat_script()
+            st.info("🔒 本英文測驗已啟用 SVG 向量圖形防翻譯與防複製機制。")
 
         # ---------------- 倒數計時器 (st_autorefresh) ----------------
         is_time_up = False
         if exam_type == "數學測驗":
-            # 每 1000 毫秒 (1 秒) 自動重新整理畫面更新倒數計時
             st_autorefresh(interval=1000, key="math_exam_timer")
 
             start_time = st.session_state[start_key]
             elapsed_seconds = (datetime.now() - start_time).total_seconds()
-            total_limit_seconds = 50 * 60  # 50 分鐘 = 3000 秒
+            total_limit_seconds = 50 * 60  # 50 分鐘
             remaining_seconds = max(0, int(total_limit_seconds - elapsed_seconds))
 
             mins, secs = divmod(remaining_seconds, 60)
@@ -224,7 +223,6 @@ if current_test_id:
                 ans_records = []
                 
                 if exam_type == "英文測驗":
-                    # Q1 題目 (以 SVG 向量渲染，無法被 Translate 抓取)
                     st.markdown(text_to_svg("Q1. Choose the correct word:", font_size=20, height=40), unsafe_allow_html=True)
                     st.markdown(text_to_svg("The project was completed ____ schedule.", font_size=18, height=35), unsafe_allow_html=True)
                     
@@ -245,7 +243,6 @@ if current_test_id:
 
                     st.divider()
 
-                    # Q2 題目 (以 SVG 向量渲染)
                     st.markdown(text_to_svg("Q2. Reading Comprehension:", font_size=20, height=40), unsafe_allow_html=True)
                     st.markdown(text_to_svg("What does 'ATS' stand for in modern HR?", font_size=18, height=35), unsafe_allow_html=True)
                     
@@ -286,7 +283,6 @@ if current_test_id:
                 btn_submit = st.form_submit_button(btn_label, type="primary", use_container_width=True)
                 
                 if btn_submit:
-                    # 計算總作答時間（秒）
                     end_time = datetime.now()
                     duration_sec = int((end_time - st.session_state[start_key]).total_seconds())
                     
@@ -310,7 +306,7 @@ if current_test_id:
 # 🔀 情境 B：網址無參數 -> 進入【HR 人資管理後台】
 # -------------------------------------------------------------------------
 else:
-    st.title("🏢 人資測評管理系統")
+    st.title("🏢 UNITECH 人資測評管理系統")
     st.caption("請輸入 HR 密碼以開啟管理功能")
     
     CORRECT_PASSWORD = st.secrets.get("HR_PASSWORD", "hr1234")
@@ -321,24 +317,21 @@ else:
         
         tab1, tab2 = st.tabs(["➕ 建立測驗連結", "📊 測驗紀錄與數據分析"])
         
-        # TAB 1: HR 派發測驗
+        # TAB 1: HR 派發測驗 (已移除應徵編號欄位)
         with tab1:
             st.subheader("產生應徵者專屬加密測驗連結")
             with st.form("create_form"):
-                col1, col2 = st.columns(2)
+                col1, col2, col3 = st.columns(3)
                 c_name = col1.text_input("應徵者姓名", placeholder="例如：王小明")
-                c_id = col2.text_input("應徵編號", placeholder="例如：A001")
-                
-                col3, col4 = st.columns(2)
-                c_dept = col3.text_input("應徵部門", placeholder="例如：財務部")
-                c_exam = col4.selectbox("選擇測驗科目", ["英文測驗", "數學測驗"])
+                c_dept = col2.text_input("應徵部門", placeholder="例如：財務部")
+                c_exam = col3.selectbox("選擇測驗科目", ["英文測驗", "數學測驗"])
                 
                 btn_gen = st.form_submit_button("🎲 建立 32 碼加密測驗連結", type="primary", use_container_width=True)
                 
                 if btn_gen:
-                    if c_name and c_id and c_dept:
+                    if c_name and c_dept:
                         token_32 = secrets.token_hex(16)
-                        save_new_test(token_32, c_id, c_name, c_dept, c_exam)
+                        save_new_test(token_32, c_name, c_dept, c_exam)
                         
                         base_url = "https://hr-quiz-6bya8ipfvrzg8c2zwfj2m2.streamlit.app"
                         quiz_url = f"{base_url}/?test={token_32}"
@@ -347,7 +340,7 @@ else:
                         st.code(quiz_url, language="text")
                         st.info("💡 請直接複製上方連結寄發給應徵者，應徵者打開後將自動鎖定身分。")
                     else:
-                        st.warning("⚠️ 請完整填寫應徵者姓名、編號與部門！")
+                        st.warning("⚠️ 請完整填寫應徵者姓名與部門！")
 
         # TAB 2: SQLite 成績與數據檢視
         with tab2:
