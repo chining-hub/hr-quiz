@@ -326,7 +326,7 @@ if current_test_id:
 # 🔀 情境 B：網址無參數 -> 進入【HR 人資管理後台】
 # -------------------------------------------------------------------------
 else:
-    st.title("🏢 UNITECH 人資測評管理系統")
+    st.title("🏢 人資測評管理系統")
     st.caption("請輸入 HR 密碼以開啟管理功能")
     
     CORRECT_PASSWORD = st.secrets.get("HR_PASSWORD", "hr1234")
