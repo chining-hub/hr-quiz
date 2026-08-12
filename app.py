@@ -179,7 +179,7 @@ def inject_anti_cheat_script():
 # =========================================================================
 # ⚙️ 3. 頁面設定與路由判斷
 # =========================================================================
-st.set_page_config(page_title="UNITECH 線上測評系統", page_icon="📝", layout="centered")
+st.set_page_config(page_title="線上測評系統", page_icon="📝", layout="centered")
 
 query_params = st.query_params
 current_test_id = query_params.get("test", None)
@@ -206,7 +206,7 @@ if current_test_id:
             st.text_input("測驗科目", value=exam_type, disabled=True)
             st.success("✅ 身分鎖定成功")
 
-        st.title(f"📝 UNITECH {exam_type}")
+        st.title(f"📝 {exam_type}")
         st.caption(f"歡迎應試者 **{cand_name}**（{cand_dept}），請仔細閱讀題目後作答。")
         st.divider()
 
@@ -216,7 +216,7 @@ if current_test_id:
 
         if exam_type == "英文測驗":
             inject_anti_cheat_script()
-            st.info("🔒 本英文測驗已啟用 SVG 向量圖形防翻譯與防複製機制。")
+            
 
         is_time_up = False
         if exam_type == "數學測驗":
@@ -298,7 +298,6 @@ if current_test_id:
                     else:
                         ans_records.append(f"Q2:❌ (選擇: {q2})")
 
-                st.caption("🔒 系統全域防作弊保護中，包含答題時間統計與作答細節記錄。")
                 
                 btn_label = "🚨 時間已到，強制交卷" if is_time_up else "🚀 確認交卷"
                 btn_submit = st.form_submit_button(btn_label, type="primary", use_container_width=True)
@@ -321,7 +320,7 @@ if current_test_id:
                     st.rerun()
         else:
             st.balloons()
-            st.success("🎉 測驗已順利完成！您的成績已自動寫入 SQLite 資料庫並備份至 Google Sheets。")
+            st.success("🎉 測驗已順利完成！")
 
 # -------------------------------------------------------------------------
 # 🔀 情境 B：網址無參數 -> 進入【HR 人資管理後台】
@@ -346,7 +345,7 @@ else:
                 c_dept = col2.text_input("應徵部門", placeholder="例如：財務部")
                 c_exam = col3.selectbox("選擇測驗科目", ["英文測驗", "數學測驗"])
                 
-                btn_gen = st.form_submit_button("🎲 建立 32 碼加密測驗連結", type="primary", use_container_width=True)
+                btn_gen = st.form_submit_button("🎲 建立隨機測驗連結", type="primary", use_container_width=True)
                 
                 if btn_gen:
                     if c_name and c_dept:
@@ -356,7 +355,7 @@ else:
                         base_url = "https://hr-quiz-6bya8ipfvrzg8c2zwfj2m2.streamlit.app"
                         quiz_url = f"{base_url}/?test={token_32}"
                         
-                        st.subheader("📋 專屬加密測驗連結（32 碼 Token）：")
+                        st.subheader("📋 隨機測驗連結：")
                         st.code(quiz_url, language="text")
                         st.info("💡 請直接複製上方連結寄發給應徵者，應徵者開啟後將自動鎖定身分。")
                     else:
