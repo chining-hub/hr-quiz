@@ -212,7 +212,7 @@ init_sqlite_db()
 # =========================================================================
 # 🛡️ 2. SVG 向量圖像化（終極 100% 防翻譯）與防右鍵/防複製模組
 # =========================================================================
-def text_to_svg(text: str, font_size: int = 25, height: int = 35) -> str:
+def text_to_svg(text: str, font_size: int = 20, height: int = 35) -> str:
     """將英文文字動態轉為 Base64 格式的 SVG 向量圖片"""
     width = max(int(len(text) * (font_size * 0.68)) + 20, 300)
     
