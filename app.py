@@ -245,7 +245,7 @@ if current_test_id:
                 
                 if exam_type == "英文測驗":
                     st.markdown(text_to_svg("PART 1. Vocabulary Test (詞彙測驗，每題3.5分) ", font_size=20, height=40), unsafe_allow_html=True)
-                    st.markdown(text_to_svg("1.	Many problems with locks ------ by a simple repair or adjustment.", font_size=18, height=35), unsafe_allow_html=True)
+                    st.markdown(text_to_svg("1.	Many problems with locks ------ by a simple repair or adjustment.", font_size=20, height=40), unsafe_allow_html=True)
                     
                     st.markdown(f"""
                     * **A)** {text_to_svg("solved")}
@@ -261,6 +261,73 @@ if current_test_id:
                         ans_records.append("Q1:⭕ (選擇: (D)	can be solved)")
                     else:
                         ans_records.append(f"Q1:❌ (選擇: {q1})")
+                    st.markdown(text_to_svg("2.	A fine of $200 will be imposed upon any drivers ------ park illegally downtown during the holiday parade.", font_size=20, height=40), unsafe_allow_html=True)
+                    
+                    st.markdown(f"""
+                    * **A)** {text_to_svg("which")}
+                    * **B)** {text_to_svg("whose")}
+                    * **C)** {text_to_svg("whom")}
+                    * **D)** {text_to_svg("who")}
+                    """, unsafe_allow_html=True)
+                    
+                    q1 = st.radio("請選擇  正確答案：", ["A", "B", "C", "D"], key="q2_radio")
+                    
+                    if q1 == "D":
+                        score += 3.5
+                        ans_records.append("Q1:⭕ (選擇: (D)	who)")
+                    else:
+                        ans_records.append(f"Q1:❌ (選擇: {q2})")
+                    st.markdown(text_to_svg("3.	The Eisenweg Foundation will soon ------ its funding of external scientific research into several new domains, including genetics and endangered languages.", font_size=20, height=40), unsafe_allow_html=True)
+                    
+                    st.markdown(f"""
+                    * **A)** {text_to_svg("exalt")}
+                    * **B)** {text_to_svg("exclaim")}
+                    * **C)** {text_to_svg("expel")}
+                    * **D)** {text_to_svg("expand")}
+                    """, unsafe_allow_html=True)
+                    
+                    q1 = st.radio("請選擇  正確答案：", ["A", "B", "C", "D"], key="q3_radio")
+                    
+                    if q1 == "D":
+                        score += 3.5
+                        ans_records.append("Q1:⭕ (選擇: (D)    expand)")
+                    else:
+                        ans_records.append(f"Q1:❌ (選擇: {q3})")
+                    st.markdown(text_to_svg("4.	Mobile phones have become ------ prevalent that telecommunications companies are establishing service in areas previously though too remote.", font_size=20, height=40), unsafe_allow_html=True)
+                    
+                    st.markdown(f"""
+                    * **A)** {text_to_svg("only")}
+                    * **B)** {text_to_svg("such")}
+                    * **C)** {text_to_svg("so")}
+                    * **D)** {text_to_svg("still")}
+                    """, unsafe_allow_html=True)
+                    
+                    q1 = st.radio("請選擇  正確答案：", ["A", "B", "C", "D"], key="q4_radio")
+                    
+                    if q1 == "C":
+                        score += 3.5
+                        ans_records.append("Q1:⭕ (選擇: (C)	so)")
+                    else:
+                        ans_records.append(f"Q1:❌ (選擇: {q4})")
+                    st.markdown(text_to_svg("5.	In recognition of Elaine Tang’s exceptional service to ------ company, the human resources director will honor her at tonight’s employee awards ceremony.", font_size=20, height=40), unsafe_allow_html=True)
+                    
+                    st.markdown(f"""
+                    * **A)** {text_to_svg("ours")}
+                    * **B)** {text_to_svg("our")}
+                    * **C)** {text_to_svg("us")}
+                    * **D)** {text_to_svg("we")}
+                    """, unsafe_allow_html=True)
+                    
+                    q1 = st.radio("請選擇  正確答案：", ["A", "B", "C", "D"], key="q5_radio")
+                    
+                    if q1 == "B":
+                        score += 3.5
+                        ans_records.append("Q1:⭕ (選擇: (B)	our)")
+                    else:
+                        ans_records.append(f"Q1:❌ (選擇: {q5})")
+                    
+                    
+
 
                     st.divider()
 
@@ -273,22 +340,7 @@ if current_test_id:
                     * **C)** {text_to_svg("Annual Team Strategy")}
                     """, unsafe_allow_html=True)
                     
-                    q2 = st.radio("請選擇 Q2 正確答案：", ["A", "B", "C"], key="q2_radio")
-                    
-                    if q2 == "A":
-                        score += 50
-                        ans_records.append("Q2:⭕ (選擇: A. Applicant Tracking System)")
-                    else:
-                        ans_records.append(f"Q2:❌ (選擇: {q2})")
-
-                elif exam_type == "數學測驗":
-                    st.subheader("Q1. 邏輯運算：")
-                    q1 = st.number_input("若 3x + 15 = 45，則 x = ?", step=1, disabled=is_time_up)
-                    if q1 == 10:
-                        score += 50
-                        ans_records.append("Q1:⭕ (回答: 10)")
-                    else:
-                        ans_records.append(f"Q1:❌ (回答: {q1})")
+                  
 
                     st.subheader("Q2. 比例計算：")
                     q2 = st.radio("一件商品原價 2,000 元，打八折後是多少元？", [1400, 1600, 1800], disabled=is_time_up)
