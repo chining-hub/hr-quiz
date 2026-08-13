@@ -9,9 +9,22 @@ from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
 
 # =========================================================================
-# 📚 0. 英文 13 題多益題庫資料結構
+# 🖼️ 閱讀測驗附件圖片 (Base64 編碼，免管理外部圖片檔)
+# =========================================================================
+# 附件一：Valentino's Corner 廣告圖
+IMG_ATTACHMENT_1 = "data:image/png;base64,iVBORw0KGgoAAAANSU_PLACEHOLDER_FOR_ATTACHMENT_1" 
+# 附件二：Yearly Consumption of Animal Products 圓餅圖
+IMG_ATTACHMENT_2 = "data:image/png;base64,iVBORw0KGgoAAAANSU_PLACEHOLDER_FOR_ATTACHMENT_2"
+
+# 若需要實體圖片，也可替換為 URL 或本地路徑
+IMG_ATTACHMENT_1_URL = "https://i.imgur.com/example1.png" # 亦可更換為實際圖片網址
+IMG_ATTACHMENT_2_URL = "https://i.imgur.com/example2.png"
+
+# =========================================================================
+# 📚 0. 英文 17 題完整多益題庫資料結構 (13題單字文法 + 4題閱讀測驗)
 # =========================================================================
 QUIZ_DATA = [
+    # ------------------- Part 1: Vocabulary & Grammar (13題) -------------------
     {
         "id": "q1",
         "question": "1. Many problems with locks ------ by a simple repair or adjustment.",
@@ -89,6 +102,48 @@ QUIZ_DATA = [
         "question": "13. To safeguard the factory from being further burglarized, it is decided that new detection equipment is to be -------.",
         "options": {"A": "founded", "B": "called", "C": "purchased", "D": "confiscated"},
         "answer": "C"
+    },
+
+    # ------------------- Part 2: Reading Comprehension (4題) -------------------
+    # 附件一題組
+    {
+        "id": "q14",
+        "attachment_type": "image",
+        "image_key": "attachment1",
+        "question": "14. What kind of business is Valentino’s Corner?",
+        "options": {"A": "A restaurant", "B": "A bakery", "C": "A pottery shop", "D": "A courier service"},
+        "answer": "A"
+    },
+    {
+        "id": "q15",
+        "attachment_type": "image",
+        "image_key": "attachment1",
+        "question": "15. What information does NOT appear in the advertisement?",
+        "options": {
+            "A": "The types of offerings available to the establishment’s customers",
+            "B": "The hours during which the establishment is open",
+            "C": "How much items cost at the establishment",
+            "D": "How long the establishment has been in business"
+        },
+        "answer": "C"
+    },
+
+    # 附件二題組
+    {
+        "id": "q16",
+        "attachment_type": "image",
+        "image_key": "attachment2",
+        "question": "16. Which product is consumed in the greatest amounts?",
+        "options": {"A": "Pork", "B": "Beef", "C": "Chicken", "D": "Fish"},
+        "answer": "B"
+    },
+    {
+        "id": "q17",
+        "attachment_type": "image",
+        "image_key": "attachment2",
+        "question": "17. Who would benefit from this particular graph?",
+        "options": {"A": "A person on a diet", "B": "A produce farmer", "C": "A vegetarian", "D": "Cattle raisers"},
+        "answer": "D"
     }
 ]
 
@@ -212,7 +267,7 @@ init_sqlite_db()
 # =========================================================================
 # 🛡️ 2. SVG 向量圖像化（支援多行自動折行 + 大字體）
 # =========================================================================
-def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 55) -> str:
+def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 50) -> str:
     """將題目自動折行為多行，生成不會被等比例縮小的清晰大字 SVG"""
     words = text.split(" ")
     lines = []
@@ -228,7 +283,7 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
         
     line_height = font_size * 1.45
     svg_height = int(len(lines) * line_height + 15)
-    svg_width = 720  # 固定寬度，防擠壓
+    svg_width = 720  
     
     tspan_elements = ""
     for idx, line in enumerate(lines):
@@ -246,7 +301,7 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
 
 def option_to_svg(text: str, font_size: int = 20) -> str:
     """單行選項專用大字體 SVG"""
-    width = max(int(len(text) * (font_size * 0.7)) + 20, 300)
+    width = max(int(len(text) * (font_size * 0.7)) + 20, 320)
     height = int(font_size * 1.6)
     
     svg_code = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
@@ -358,16 +413,35 @@ if current_test_id:
                 score = 0.0
                 ans_records = []
                 
-                # ------------------- 英文測驗（多行大字版）-------------------
+                # ------------------- 英文測驗（含單字語法 + 閱讀圖表）-------------------
                 if exam_type == "英文測驗":
-                    st.markdown(text_to_multiline_svg("PART 1. English Vocabulary & Grammar Test (每題 3.5 分)", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
+                    st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
                     st.divider()
+
+                    last_rendered_attachment = None
 
                     for idx, q_item in enumerate(QUIZ_DATA):
                         q_id = q_item["id"]
                         q_text = q_item["question"]
                         opts = q_item["options"]
                         corr_ans = q_item["answer"]
+
+                        # 進入 Part 2 閱讀測驗標頭
+                        if idx == 13:
+                            st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
+                            st.divider()
+
+                        # 判斷是否需要渲染附件圖片
+                        if "image_key" in q_item:
+                            img_key = q_item["image_key"]
+                            if img_key != last_rendered_attachment:
+                                st.info("📌 請根據下方文章/圖表內容回答問題：")
+                                if img_key == "attachment1":
+                                    # 可替換為圖片 Base64 或上傳檔路徑
+                                    st.image("題目1.png", caption="[附件一] Valentino's Corner 廣告", use_column_width=True)
+                                elif img_key == "attachment2":
+                                    st.image("題目2.png", caption="[附件二] Yearly Consumption of Animal Products", use_column_width=True)
+                                last_rendered_attachment = img_key
 
                         # 題目採用多行自動折行 SVG，字體 22px 加粗清晰
                         st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=50), unsafe_allow_html=True)
@@ -384,9 +458,9 @@ if current_test_id:
                         # 選擇單選鈕
                         user_ans = st.radio("請選擇正確答案：", ["A", "B", "C", "D"], key=f"radio_{q_id}")
                         
-                        # 判斷得分與記錄
+                        # 判斷得分與記錄 (配分：每題 5.88 分，共 100 分)
                         if user_ans == corr_ans:
-                            score += 3.5
+                            score += (100.0 / len(QUIZ_DATA))
                             ans_records.append(f"Q{idx+1}:⭕ ({user_ans})")
                         else:
                             ans_records.append(f"Q{idx+1}:❌ ({user_ans})")
@@ -418,7 +492,7 @@ if current_test_id:
                     
                     mark_test_completed_and_save_result(
                         current_test_id, cand_name, cand_dept, exam_type, 
-                        score, duration_sec, details_str, cheat_logs
+                        round(score, 1), duration_sec, details_str, cheat_logs
                     )
                     st.session_state.submitted = True
                     st.rerun()
@@ -479,6 +553,7 @@ else:
             conn.close()
                 
     elif hr_password:
+        st.error("密碼錯誤，請重新輸入！")
         st.error("密碼錯誤，請重新輸入！")
     elif hr_password:
         st.error("密碼錯誤，請重新輸入！")
