@@ -244,21 +244,21 @@ if current_test_id:
                 ans_records = []
                 
                 if exam_type == "英文測驗":
-                    st.markdown(text_to_svg("Q1. Choose the correct word:", font_size=20, height=40), unsafe_allow_html=True)
-                    st.markdown(text_to_svg("The project was completed ____ schedule.", font_size=18, height=35), unsafe_allow_html=True)
+                    st.markdown(text_to_svg("PART 1. Vocabulary Test (詞彙測驗，每題3.5分) ", font_size=20, height=40), unsafe_allow_html=True)
+                    st.markdown(text_to_svg("1.	Many problems with locks ------ by a simple repair or adjustment.", font_size=18, height=35), unsafe_allow_html=True)
                     
                     st.markdown(f"""
-                    * **A)** {text_to_svg("on")}
-                    * **B)** {text_to_svg("in")}
-                    * **C)** {text_to_svg("at")}
-                    * **D)** {text_to_svg("to")}
+                    * **A)** {text_to_svg("solved")}
+                    * **B)** {text_to_svg("could solve")}
+                    * **C)** {text_to_svg("can solve")}
+                    * **D)** {text_to_svg("can be solved")}
                     """, unsafe_allow_html=True)
                     
-                    q1 = st.radio("請選擇 Q1 正確答案：", ["A", "B", "C", "D"], key="q1_radio")
+                    q1 = st.radio("請選擇  正確答案：", ["A", "B", "C", "D"], key="q1_radio")
                     
-                    if q1 == "A":
-                        score += 50
-                        ans_records.append("Q1:⭕ (選擇: A. on)")
+                    if q1 == "D":
+                        score += 3.5
+                        ans_records.append("Q1:⭕ (選擇: (D)	can be solved)")
                     else:
                         ans_records.append(f"Q1:❌ (選擇: {q1})")
 
