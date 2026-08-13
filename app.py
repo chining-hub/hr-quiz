@@ -337,7 +337,7 @@ if current_test_id:
                         corr_ans = q_item["answer"]
 
                         # 渲染題目 SVG
-                        st.markdown(text_to_svg(q_text, font_size=18, height=35), unsafe_allow_html=True)
+                        st.markdown(text_to_svg(q_text, font_size=20, height=35), unsafe_allow_html=True)
                         
                         # 渲染選項 SVG
                         opts_html = f"""
