@@ -210,14 +210,47 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
 init_sqlite_db()
 
 # =========================================================================
-# 🛡️ 2. SVG 向量圖像化（終極 100% 防翻譯）與防右鍵/防複製模組
+# 🛡️ 2. SVG 向量圖像化（支援多行自動折行 + 大字體）
 # =========================================================================
-def text_to_svg(text: str, font_size: int =24, height: int = 50) -> str:
-    """將英文文字動態轉為 Base64 格式的 SVG 向量圖片"""
-    width = max(int(len(text) * (font_size * 0.68)) + 20, 300)
+def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 55) -> str:
+    """將題目自動折行為多行，生成不會被等比例縮小的清晰大字 SVG"""
+    words = text.split(" ")
+    lines = []
+    current_line = []
+    
+    for word in words:
+        current_line.append(word)
+        if sum(len(w) for w in current_line) + len(current_line) - 1 >= max_chars_per_line:
+            lines.append(" ".join(current_line))
+            current_line = []
+    if current_line:
+        lines.append(" ".join(current_line))
+        
+    line_height = font_size * 1.45
+    svg_height = int(len(lines) * line_height + 15)
+    svg_width = 720  # 固定寬度，防擠壓
+    
+    tspan_elements = ""
+    for idx, line in enumerate(lines):
+        y_pos = int((idx + 1) * line_height)
+        tspan_elements += f'<tspan x="0" y="{y_pos}">{line}</tspan>'
+        
+    svg_code = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{svg_width}" height="{svg_height}" viewBox="0 0 {svg_width} {svg_height}">
+        <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="{font_size}px" font-weight="600" fill="#111827">
+            {tspan_elements}
+        </text>
+    </svg>'''
+    
+    b64 = base64.b64encode(svg_code.encode('utf-8')).decode('utf-8')
+    return f'<img src="data:image/svg+xml;base64,{b64}" style="vertical-align: middle; display: block; margin: 8px 0; max-width: 100%; height: auto;" />'
+
+def option_to_svg(text: str, font_size: int = 20) -> str:
+    """單行選項專用大字體 SVG"""
+    width = max(int(len(text) * (font_size * 0.7)) + 20, 300)
+    height = int(font_size * 1.6)
     
     svg_code = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
-        <text x="0" y="{font_size + 2}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="{font_size}px" font-weight="500" fill="#31333F">{text}</text>
+        <text x="0" y="{font_size}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="{font_size}px" font-weight="500" fill="#374151">{text}</text>
     </svg>'''
     
     b64 = base64.b64encode(svg_code.encode('utf-8')).decode('utf-8')
@@ -325,9 +358,9 @@ if current_test_id:
                 score = 0.0
                 ans_records = []
                 
-                # ------------------- 英文測驗（13題完整渲染）-------------------
+                # ------------------- 英文測驗（多行大字版）-------------------
                 if exam_type == "英文測驗":
-                    st.markdown(text_to_svg("PART 1. English Vocabulary & Grammar Test (每題 3.5 分)", font_size=20, height=40), unsafe_allow_html=True)
+                    st.markdown(text_to_multiline_svg("PART 1. English Vocabulary & Grammar Test (每題 3.5 分)", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
                     st.divider()
 
                     for idx, q_item in enumerate(QUIZ_DATA):
@@ -336,15 +369,15 @@ if current_test_id:
                         opts = q_item["options"]
                         corr_ans = q_item["answer"]
 
-                        # 渲染題目 SVG
-                        st.markdown(text_to_svg(q_text, font_size=20, height=35), unsafe_allow_html=True)
+                        # 題目採用多行自動折行 SVG，字體 22px 加粗清晰
+                        st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=50), unsafe_allow_html=True)
                         
-                        # 渲染選項 SVG
+                        # 選項採用單行 20px SVG
                         opts_html = f"""
-                        * **A)** {text_to_svg(opts['A'])}
-                        * **B)** {text_to_svg(opts['B'])}
-                        * **C)** {text_to_svg(opts['C'])}
-                        * **D)** {text_to_svg(opts['D'])}
+                        * **A)** {option_to_svg(opts['A'], font_size=20)}
+                        * **B)** {option_to_svg(opts['B'], font_size=20)}
+                        * **C)** {option_to_svg(opts['C'], font_size=20)}
+                        * **D)** {option_to_svg(opts['D'], font_size=20)}
                         """
                         st.markdown(opts_html, unsafe_allow_html=True)
                         
@@ -445,5 +478,7 @@ else:
             
             conn.close()
                 
+    elif hr_password:
+        st.error("密碼錯誤，請重新輸入！")
     elif hr_password:
         st.error("密碼錯誤，請重新輸入！")
