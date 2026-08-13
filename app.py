@@ -32,9 +32,9 @@ def display_quiz_image(image_filename, alt_caption):
         st.error(f"⚠️ 找不到圖片檔案：`{image_filename}`！請確認該圖片是否已放置在與 `app.py` 同一個資料夾內，並已 Git Push 上傳。")
 
 # =========================================================================
-# 📚 0. 英文 17 題完整多益題庫資料結構 (13題單字文法 + 4題閱讀測驗)
+# 📚 題庫資料結構 (英文 17 題 / 數學 23 題)
 # =========================================================================
-QUIZ_DATA = [
+ENGLISH_QUIZ_DATA = [
     # ------------------- Part 1: Vocabulary & Grammar (13題) -------------------
     {
         "id": "q1",
@@ -116,10 +116,8 @@ QUIZ_DATA = [
     },
 
     # ------------------- Part 2: Reading Comprehension (4題) -------------------
-    # 附件一題組
     {
         "id": "q14",
-        "attachment_type": "image",
         "image_key": "attachment1",
         "question": "14. What kind of business is Valentino’s Corner?",
         "options": {"A": "A restaurant", "B": "A bakery", "C": "A pottery shop", "D": "A courier service"},
@@ -127,7 +125,6 @@ QUIZ_DATA = [
     },
     {
         "id": "q15",
-        "attachment_type": "image",
         "image_key": "attachment1",
         "question": "15. What information does NOT appear in the advertisement?",
         "options": {
@@ -138,11 +135,8 @@ QUIZ_DATA = [
         },
         "answer": "C"
     },
-
-    # 附件二題組
     {
         "id": "q16",
-        "attachment_type": "image",
         "image_key": "attachment2",
         "question": "16. Which product is consumed in the greatest amounts?",
         "options": {"A": "Pork", "B": "Beef", "C": "Chicken", "D": "Fish"},
@@ -150,10 +144,150 @@ QUIZ_DATA = [
     },
     {
         "id": "q17",
-        "attachment_type": "image",
         "image_key": "attachment2",
         "question": "17. Who would benefit from this particular graph?",
         "options": {"A": "A person on a diet", "B": "A produce farmer", "C": "A vegetarian", "D": "Cattle raisers"},
+        "answer": "D"
+    }
+]
+
+MATH_QUIZ_DATA = [
+    {
+        "id": "mq1",
+        "question": "1. 2，2，4，12，    ，240",
+        "options": {"A": "24", "B": "84", "C": "32", "D": "48", "E": "120"},
+        "answer": "D"
+    },
+    {
+        "id": "mq2",
+        "question": "2. 27，9，18，6，12，    ，8",
+        "options": {"A": "3", "B": "6", "C": "4", "D": "12", "E": "8"},
+        "answer": "C"
+    },
+    {
+        "id": "mq3",
+        "question": "3. 某次數學測驗中，試題共有50題，答對一題給2分，答錯一題倒扣1分，沒有做答的不給分，某生答對42題，答錯4題，有4題未答，則此生得多少分？",
+        "options": {"A": "76", "B": "78", "C": "80", "D": "82", "E": "84"},
+        "answer": "C"
+    },
+    {
+        "id": "mq4",
+        "question": "4. 某一牧場共有牛、羊、馬共1300隻，已知牛的數量恰為馬的數量75%，而羊的數量為牛的數量2倍，則請問牛有多少隻？",
+        "options": {"A": "200", "B": "300", "C": "400", "D": "600", "E": "800"},
+        "answer": "B"
+    },
+    {
+        "id": "mq5",
+        "question": "5. 在一條路的兩旁種樹，每隔4公尺種樹一棵，共種200棵，請問此條路長多少公尺？",
+        "options": {"A": "800", "B": "792", "C": "400", "D": "396", "E": "404"},
+        "answer": "D"
+    },
+    {
+        "id": "mq6",
+        "question": "6. 已知某個水池，每秒鐘流出8公升的水，每秒鐘流入10公升的水；1分半鐘以後，池中有水200公升，池中原來有水多少公升？",
+        "options": {"A": "20", "B": "40", "C": "60", "D": "80", "E": "100"},
+        "answer": "A"
+    },
+    {
+        "id": "mq7",
+        "question": "7. 甲乙兩杯糖水，甲杯濃度為18%，乙杯為14%；若在現要調配出16%的糖水，則甲乙兩杯糖水取用的比例為多少？",
+        "options": {"A": "1:1", "B": "1:2", "C": "1:3", "D": "2:3", "E": "1:4"},
+        "answer": "A"
+    },
+    {
+        "id": "mq8",
+        "question": "8. 某家便利商店推出特賣商品，每賣出一件可獲利60元。已知其成本為特價的7折，則請問特價為多少元？",
+        "options": {"A": "100", "B": "140", "C": "150", "D": "180", "E": "200"},
+        "answer": "E"
+    },
+    {
+        "id": "mq9",
+        "question": "9. 若正方形各邊長減少10%時，則其面積減少多少？",
+        "options": {"A": "1%", "B": "10%", "C": "15%", "D": "19%", "E": "20%"},
+        "answer": "D"
+    },
+    {
+        "id": "mq10",
+        "question": "10. 同樣的物品，甲店的定價為1,300，乙店為1,350元，丙店為1,600元，但甲店打9折，乙店打75折，丙店打雙8折，則賣價最低的是那一家？",
+        "options": {"A": "甲", "B": "乙", "C": "丙", "D": "甲乙一樣低", "E": "三家一樣低"},
+        "answer": "B"
+    },
+    {
+        "id": "mq11",
+        "question": "11. 甲乙丙三個兄弟，每個兄弟各有三個妹妺，請問這家共有幾個兄弟姐妹？",
+        "options": {"A": "3", "B": "4", "C": "6", "D": "9", "E": "12"},
+        "answer": "C"
+    },
+    {
+        "id": "mq12",
+        "question": "12. 一邊長各為6公分的正方體，六面皆塗上顏料後，再將各邊長三等分，切成長寬高各為2公分的小立方體，請問這些小立方體中，六面皆未塗上顏料的有幾個？",
+        "options": {"A": "1", "B": "2", "C": "3", "D": "4", "E": "5"},
+        "answer": "A"
+    },
+    {
+        "id": "mq13",
+        "question": "13. 屋內有一群男女生，男生眼中所見「男3倍於女」，女生眼中所見「男5倍於女」，請問男生有幾人？",
+        "options": {"A": "3", "B": "5", "C": "9", "D": "10", "E": "12"},
+        "answer": "C"
+    },
+    {
+        "id": "mq14",
+        "question": "14. 某布店繪製一張圓形圖，表明銷售各種布料之比例；其中卡其布的銷售佔總銷售量的5%，請問在圓形圖上應佔多少度的面積？",
+        "options": {"A": "5", "B": "9", "C": "15", "D": "18", "E": "36"},
+        "answer": "D"
+    },
+    {
+        "id": "mq15",
+        "question": "15. 有一列火車全長90公尺，時速為90km/hr，現在要通過一座橋，橋長60公尺，則請問當火車剛通過橋頭，到火車尾離開橋尾，總共需花費多少分鐘？",
+        "options": {"A": "0.1", "B": "0.5", "C": "1", "D": "1.5", "E": "2"},
+        "answer": "A"
+    },
+    {
+        "id": "mq16",
+        "question": "16. 一件工作，甲獨做24日完成，乙獨做36日完成，丙獨作18日完成，則三人合作要幾天才能完成？",
+        "options": {"A": "7", "B": "8", "C": "9", "D": "12", "E": "18"},
+        "answer": "B"
+    },
+    {
+        "id": "mq17",
+        "question": "17. 已知小美年齡與老公大華的年齡比為3：4，且小美年紀比大華小9歲，則請問2人明年的年齡和為多少歲？",
+        "options": {"A": "55", "B": "57", "C": "63", "D": "65", "E": "67"},
+        "answer": "D"
+    },
+    {
+        "id": "mq18",
+        "question": "18. 有一個二位數，已知個位數字和十位數字和為11，若將個位數數字和十位數數字交換，可得一個新的二位數，此新二位數為原來的二位數之2倍多7；請問此新二位數為多少？",
+        "options": {"A": "38", "B": "83", "C": "56", "D": "65", "E": "74"},
+        "answer": "B"
+    },
+    {
+        "id": "mq19",
+        "question": "19. 一群獵人在小屋裡開會，身旁皆會跟著自己帶來的獵狗；已知屋內共有28個頭，96條腿，請問屋內共有幾隻獵狗？",
+        "options": {"A": "8", "B": "12", "C": "16", "D": "20", "E": "24"},
+        "answer": "D"
+    },
+    {
+        "id": "mq20",
+        "question": "20. (題組20-21) 有甲、乙、丙共3位月薪資不同之員工，已知：(1) 甲的75%等於乙的57% (2) 甲的75%等於丙的45%。請問誰的月薪最高？",
+        "options": {"A": "甲", "B": "乙", "C": "丙"},
+        "answer": "C"
+    },
+    {
+        "id": "mq21",
+        "question": "21. (題組20-21) 承上題，請問誰的月薪最低？",
+        "options": {"A": "甲", "B": "乙", "C": "丙"},
+        "answer": "B"
+    },
+    {
+        "id": "mq22",
+        "question": "22. (題組22-23) 小明有一個哥哥、一個弟弟和一個妹妺，已知：(1)3年前哥哥的年紀是弟弟年紀的3倍 (2)2年後哥哥的年紀是弟弟年紀的2倍 (3)弟弟和妹妹年紀相差1歲 (4)2年前小明的年紀是弟弟的2倍 (5)明年小明的年紀是妹妹的2倍少1歲。請問小明今年幾歲？",
+        "options": {"A": "8", "B": "10", "C": "12", "D": "14", "E": "16"},
+        "answer": "C"
+    },
+    {
+        "id": "mq23",
+        "question": "23. (題組22-23) 承上題，請問幾年後，哥哥年紀是妹妺的2倍？",
+        "options": {"A": "2", "B": "3", "C": "4", "D": "5", "E": "6"},
         "answer": "D"
     }
 ]
@@ -164,16 +298,13 @@ QUIZ_DATA = [
 DB_NAME = "quiz_database.db"
 
 def get_db_connection():
-    """建立 SQLite 連線"""
     conn = sqlite3.connect(DB_NAME, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
 
 def init_sqlite_db():
-    """初始化 SQLite 資料表結構"""
     conn = get_db_connection()
     cursor = conn.cursor()
-    
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS tests (
             test_id TEXT PRIMARY KEY,
@@ -184,7 +315,6 @@ def init_sqlite_db():
             status TEXT
         )
     ''')
-    
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS results (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -203,7 +333,6 @@ def init_sqlite_db():
     conn.close()
 
 def get_test_by_id(test_id):
-    """查詢 Token 資料"""
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM tests WHERE test_id = ?", (test_id,))
@@ -212,7 +341,6 @@ def get_test_by_id(test_id):
     return dict(row) if row else None
 
 def save_new_test(test_id, name, dept, exam_type):
-    """新增測驗派發紀錄"""
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
@@ -223,11 +351,9 @@ def save_new_test(test_id, name, dept, exam_type):
     conn.close()
 
 def sync_to_google_sheets(data_dict):
-    """自動備份成績至 Google Sheets"""
     url = st.secrets.get("GSHEET_WEBAPP_URL", "")
     if not url:
         return
-    
     try:
         req = urllib.request.Request(
             url,
@@ -240,7 +366,6 @@ def sync_to_google_sheets(data_dict):
         print(f"Google Sheets 同步失敗: {e}")
 
 def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, duration_sec, details_str, cheat_logs):
-    """更新測驗狀態、寫入 SQLite 並同步至 Google Sheets"""
     conn = get_db_connection()
     cursor = conn.cursor()
     
@@ -268,14 +393,12 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
     }
     sync_to_google_sheets(sync_data)
 
-# 初始化 SQLite 資料庫
 init_sqlite_db()
 
 # =========================================================================
-# 🛡️ 2. SVG 向量圖像化（支援多行自動折行 + 大字體）
+# 🛡️ 2. SVG 向量圖像化與防偷看腳本
 # =========================================================================
 def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 50) -> str:
-    """將題目自動折行為多行，生成大字體 SVG"""
     words = text.split(" ")
     lines = []
     current_line = []
@@ -307,7 +430,6 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
     return f'<img src="data:image/svg+xml;base64,{b64}" style="vertical-align: middle; display: block; margin: 8px 0; max-width: 100%; height: auto;" />'
 
 def option_to_svg(text: str, font_size: int = 20) -> str:
-    """單行選項專用大字體 SVG"""
     width = max(int(len(text) * (font_size * 0.7)) + 20, 320)
     height = int(font_size * 1.6)
     
@@ -319,7 +441,6 @@ def option_to_svg(text: str, font_size: int = 20) -> str:
     return f'<img src="data:image/svg+xml;base64,{b64}" style="vertical-align: middle; display: inline-block; margin: 2px 0;" />'
 
 def inject_anti_cheat_script():
-    """注入 JS 防護機制"""
     st.markdown(
         """
         <script>
@@ -389,8 +510,7 @@ if current_test_id:
         if start_key not in st.session_state:
             st.session_state[start_key] = datetime.now()
 
-        if exam_type == "英文測驗":
-            inject_anti_cheat_script()
+        inject_anti_cheat_script()
 
         is_time_up = False
         if exam_type == "數學測驗":
@@ -424,7 +544,7 @@ if current_test_id:
 
                     last_rendered_attachment = None
 
-                    for idx, q_item in enumerate(QUIZ_DATA):
+                    for idx, q_item in enumerate(ENGLISH_QUIZ_DATA):
                         q_id = q_item["id"]
                         q_text = q_item["question"]
                         opts = q_item["options"]
@@ -434,7 +554,6 @@ if current_test_id:
                             st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
                             st.divider()
 
-                        # 安全顯示圖片附件
                         if "image_key" in q_item:
                             img_key = q_item["image_key"]
                             if img_key != last_rendered_attachment:
@@ -447,33 +566,44 @@ if current_test_id:
 
                         st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=50), unsafe_allow_html=True)
                         
-                        opts_html = f"""
-                        * **A)** {option_to_svg(opts['A'], font_size=20)}
-                        * **B)** {option_to_svg(opts['B'], font_size=20)}
-                        * **C)** {option_to_svg(opts['C'], font_size=20)}
-                        * **D)** {option_to_svg(opts['D'], font_size=20)}
-                        """
+                        opts_html = "".join([f"* **{k})** {option_to_svg(v, font_size=20)}<br/>" for k, v in opts.items()])
                         st.markdown(opts_html, unsafe_allow_html=True)
                         
-                        user_ans = st.radio("請選擇正確答案：", ["A", "B", "C", "D"], key=f"radio_{q_id}")
+                        user_ans = st.radio("請選擇正確答案：", list(opts.keys()), key=f"radio_{q_id}")
                         
                         if user_ans == corr_ans:
-                            score += (100.0 / len(QUIZ_DATA))
+                            score += (100.0 / len(ENGLISH_QUIZ_DATA))
                             ans_records.append(f"Q{idx+1}:⭕ ({user_ans})")
                         else:
                             ans_records.append(f"Q{idx+1}:❌ ({user_ans})")
                         
                         st.divider()
 
-                # ------------------- 數學測驗 -------------------
+                # ------------------- 數學測驗 (1-23題) -------------------
                 elif exam_type == "數學測驗":
-                    st.subheader("Q1. 比例計算：")
-                    q_math1 = st.radio("一件商品原價 2,000 元，打八折後是多少元？", [1400, 1600, 1800], disabled=is_time_up, key="qm1_radio")
-                    if q_math1 == 1600:
-                        score += 100.0
-                        ans_records.append("Q1:⭕ (選擇: 1600)")
-                    else:
-                        ans_records.append(f"Q1:❌ (選擇: {q_math1})")
+                    st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 23 題，每題 2.5 分）", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
+                    st.divider()
+
+                    for idx, q_item in enumerate(MATH_QUIZ_DATA):
+                        q_id = q_item["id"]
+                        q_text = q_item["question"]
+                        opts = q_item["options"]
+                        corr_ans = q_item["answer"]
+
+                        st.markdown(text_to_multiline_svg(q_text, font_size=20, max_chars_per_line=45), unsafe_allow_html=True)
+                        
+                        opts_html = "".join([f"* **({k})** {option_to_svg(v, font_size=18)}<br/>" for k, v in opts.items()])
+                        st.markdown(opts_html, unsafe_allow_html=True)
+                        
+                        user_ans = st.radio("請選擇正確答案：", list(opts.keys()), key=f"m_radio_{q_id}", disabled=is_time_up)
+                        
+                        if user_ans == corr_ans:
+                            score += 2.5  # 每題 2.5 分
+                            ans_records.append(f"Q{idx+1}:⭕ ({user_ans})")
+                        else:
+                            ans_records.append(f"Q{idx+1}:❌ ({user_ans})")
+                        
+                        st.divider()
 
                 btn_label = "🚨 時間已到，強制交卷" if is_time_up else "🚀 確認交卷"
                 btn_submit = st.form_submit_button(btn_label, type="primary", use_container_width=True)
