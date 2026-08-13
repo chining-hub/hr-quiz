@@ -32,7 +32,7 @@ def display_quiz_image(image_filename, alt_caption):
         st.error(f"⚠️ 找不到圖片檔案：`{image_filename}`！請確認該圖片是否已放置在與 `app.py` 同一個資料夾內，並已 Git Push 上傳。")
 
 # =========================================================================
-# 📚 題庫資料結構 (英文 17 題 / 數學 23 題)
+# 📚 題庫資料結構 (英文 17 題 / 數學 27 題)
 # =========================================================================
 ENGLISH_QUIZ_DATA = [
     # ------------------- Part 1: Vocabulary & Grammar (13題) -------------------
@@ -289,6 +289,30 @@ MATH_QUIZ_DATA = [
         "question": "23. (題組22-23) 承上題，請問幾年後，哥哥年紀是妹妺的2倍？",
         "options": {"A": "2", "B": "3", "C": "4", "D": "5", "E": "6"},
         "answer": "D"
+    },
+    {
+        "id": "mq24",
+        "question": "24. (題組24-25) 在九宮格中，任何直的三位數字相加等於橫的三位數字相加，也等於斜的三位數字相加。\n已知矩陣為：\n[ 18,  X,  Y ]\n[  M, 15,  N ]\n[  Z, 19, 12 ]\n請問 X = ？",
+        "options": {"A": "16", "B": "18", "C": "14", "D": "12", "E": "11"},
+        "answer": "E"
+    },
+    {
+        "id": "mq25",
+        "question": "25. (題組24-25) 承上題，請問 N = ？",
+        "options": {"A": "14", "B": "15", "C": "16", "D": "17", "E": "18"},
+        "answer": "D"
+    },
+    {
+        "id": "mq26",
+        "question": "26. (題組26-27) 某次小考，老師出了2題數學題目，班上同學一共40人，第一題答對者有10人，第二題答對者有26人，但零分者有6人。請問考滿分100分者，有幾個人？",
+        "options": {"A": "0", "B": "2", "C": "3", "D": "4", "E": "6"},
+        "answer": "B"
+    },
+    {
+        "id": "mq27",
+        "question": "27. (題組26-27) 承上題，請問只答對一題者，有幾個人？",
+        "options": {"A": "26", "B": "28", "C": "30", "D": "32", "E": "36"},
+        "answer": "D"
     }
 ]
 
@@ -399,17 +423,19 @@ init_sqlite_db()
 # 🛡️ 2. SVG 向量圖像化與防偷看腳本
 # =========================================================================
 def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 50) -> str:
-    words = text.split(" ")
+    lines_input = text.split("\n")
     lines = []
-    current_line = []
     
-    for word in words:
-        current_line.append(word)
-        if sum(len(w) for w in current_line) + len(current_line) - 1 >= max_chars_per_line:
+    for paragraph in lines_input:
+        words = paragraph.split(" ")
+        current_line = []
+        for word in words:
+            current_line.append(word)
+            if sum(len(w) for w in current_line) + len(current_line) - 1 >= max_chars_per_line:
+                lines.append(" ".join(current_line))
+                current_line = []
+        if current_line:
             lines.append(" ".join(current_line))
-            current_line = []
-    if current_line:
-        lines.append(" ".join(current_line))
         
     line_height = font_size * 1.45
     svg_height = int(len(lines) * line_height + 15)
@@ -579,9 +605,9 @@ if current_test_id:
                         
                         st.divider()
 
-                # ------------------- 數學測驗 (1-23題) -------------------
+                # ------------------- 數學測驗 (1-27題) -------------------
                 elif exam_type == "數學測驗":
-                    st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 23 題，每題 2.5 分）", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
+                    st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
                     st.divider()
 
                     for idx, q_item in enumerate(MATH_QUIZ_DATA):
@@ -677,6 +703,9 @@ else:
             df_results = pd.read_sql_query("SELECT * FROM results ORDER BY submit_time DESC", conn)
             st.dataframe(df_results, use_container_width=True)
             conn.close()
+                
+    elif hr_password:
+        st.error("密碼錯誤，請重新輸入！")
                 
     elif hr_password:
         st.error("密碼錯誤，請重新輸入！")
