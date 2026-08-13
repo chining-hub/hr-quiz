@@ -434,16 +434,15 @@ if current_test_id:
                             st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
                             st.divider()
 
+                        # 安全顯示圖片附件
                         if "image_key" in q_item:
                             img_key = q_item["image_key"]
                             if img_key != last_rendered_attachment:
                                 st.info("📌 請根據下方文章/圖表內容回答問題：")
                                 if img_key == "attachment1":
-                                    img_source = load_image_safe("題目1.png", IMG_ATTACHMENT_1_B64)
-                                    st.image(img_source, caption="[附件一] Valentino's Corner 廣告", use_container_width=True)
+                                    display_quiz_image("題目1.png", "[附件一] Valentino's Corner 廣告")
                                 elif img_key == "attachment2":
-                                    img_source = load_image_safe("題目2.png", IMG_ATTACHMENT_2_B64)
-                                    st.image(img_source, caption="[附件二] Yearly Consumption of Animal Products", use_container_width=True)
+                                    display_quiz_image("題目2.png", "[附件二] Yearly Consumption of Animal Products")
                                 last_rendered_attachment = img_key
 
                         st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=50), unsafe_allow_html=True)
