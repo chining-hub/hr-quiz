@@ -4,21 +4,23 @@ import sqlite3
 import secrets
 import base64
 import json
+import os
 import urllib.request
 from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
 
 # =========================================================================
-# 🖼️ 閱讀測驗附件圖片 (Base64 編碼，免管理外部圖片檔)
+# 🖼️ 閱讀測驗附件圖片 (Base64 編碼預設備援，避免檔名找不到的問題)
 # =========================================================================
-# 附件一：Valentino's Corner 廣告圖
-IMG_ATTACHMENT_1 = "data:image/png;base64,iVBORw0KGgoAAAANSU_PLACEHOLDER_FOR_ATTACHMENT_1" 
-# 附件二：Yearly Consumption of Animal Products 圓餅圖
-IMG_ATTACHMENT_2 = "data:image/png;base64,iVBORw0KGgoAAAANSU_PLACEHOLDER_FOR_ATTACHMENT_2"
+# 預設的 Base64 示意圖 (可更換為實際圖片的 Base64 字串)
+IMG_ATTACHMENT_1_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+IMG_ATTACHMENT_2_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
 
-# 若需要實體圖片，也可替換為 URL 或本地路徑
-IMG_ATTACHMENT_1_URL = "https://i.imgur.com/example1.png" # 亦可更換為實際圖片網址
-IMG_ATTACHMENT_2_URL = "https://i.imgur.com/example2.png"
+def load_image_safe(local_path, fallback_b64):
+    """安全載入圖片：優先讀取本地圖片，若無則傳回預設 Base64"""
+    if os.path.exists(local_path):
+        return local_path
+    return fallback_b64
 
 # =========================================================================
 # 📚 0. 英文 17 題完整多益題庫資料結構 (13題單字文法 + 4題閱讀測驗)
@@ -212,7 +214,7 @@ def save_new_test(test_id, name, dept, exam_type):
     conn.close()
 
 def sync_to_google_sheets(data_dict):
-    """自動備份成績至 Google Sheets (經由 Google Apps Script Web App)"""
+    """自動備份成績至 Google Sheets"""
     url = st.secrets.get("GSHEET_WEBAPP_URL", "")
     if not url:
         return
@@ -235,10 +237,7 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
     
     submit_time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
-    # 1. 更新狀態為已完成
     cursor.execute("UPDATE tests SET status = '已完成' WHERE test_id = ?", (test_id,))
-    
-    # 2. 寫入 SQLite
     cursor.execute('''
         INSERT INTO results (test_id, name, dept, exam_type, score, submit_time, duration_seconds, details, cheat_logs)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -247,7 +246,6 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
     conn.commit()
     conn.close()
 
-    # 3. 背景自動同步至 Google Sheets
     sync_data = {
         "test_id": test_id,
         "name": name,
@@ -268,7 +266,7 @@ init_sqlite_db()
 # 🛡️ 2. SVG 向量圖像化（支援多行自動折行 + 大字體）
 # =========================================================================
 def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 50) -> str:
-    """將題目自動折行為多行，生成不會被等比例縮小的清晰大字 SVG"""
+    """將題目自動折行為多行，生成大字體 SVG"""
     words = text.split(" ")
     lines = []
     current_line = []
@@ -312,7 +310,7 @@ def option_to_svg(text: str, font_size: int = 20) -> str:
     return f'<img src="data:image/svg+xml;base64,{b64}" style="vertical-align: middle; display: inline-block; margin: 2px 0;" />'
 
 def inject_anti_cheat_script():
-    """注入 JS：強制根目錄防翻譯、防選取與防右鍵"""
+    """注入 JS 防護機制"""
     st.markdown(
         """
         <script>
@@ -355,9 +353,6 @@ st.set_page_config(page_title="線上測評系統", page_icon="📝", layout="ce
 query_params = st.query_params
 current_test_id = query_params.get("test", None)
 
-# -------------------------------------------------------------------------
-# 🔀 情境 A：網址有 ?test=xxxx -> 進入【應試者測驗入口】
-# -------------------------------------------------------------------------
 if current_test_id:
     test_info = get_test_by_id(current_test_id)
     
@@ -413,7 +408,7 @@ if current_test_id:
                 score = 0.0
                 ans_records = []
                 
-                # ------------------- 英文測驗（含單字語法 + 閱讀圖表）-------------------
+                # ------------------- 英文測驗 -------------------
                 if exam_type == "英文測驗":
                     st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
                     st.divider()
@@ -426,27 +421,24 @@ if current_test_id:
                         opts = q_item["options"]
                         corr_ans = q_item["answer"]
 
-                        # 進入 Part 2 閱讀測驗標頭
                         if idx == 13:
                             st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
                             st.divider()
 
-                        # 判斷是否需要渲染附件圖片
                         if "image_key" in q_item:
                             img_key = q_item["image_key"]
                             if img_key != last_rendered_attachment:
                                 st.info("📌 請根據下方文章/圖表內容回答問題：")
                                 if img_key == "attachment1":
-                                    # 可替換為圖片 Base64 或上傳檔路徑
-                                    st.image("題目1.png", caption="[附件一] Valentino's Corner 廣告", use_column_width=True)
+                                    img_source = load_image_safe("題目1.png", IMG_ATTACHMENT_1_B64)
+                                    st.image(img_source, caption="[附件一] Valentino's Corner 廣告", use_container_width=True)
                                 elif img_key == "attachment2":
-                                    st.image("題目2.png", caption="[附件二] Yearly Consumption of Animal Products", use_column_width=True)
+                                    img_source = load_image_safe("題目2.png", IMG_ATTACHMENT_2_B64)
+                                    st.image(img_source, caption="[附件二] Yearly Consumption of Animal Products", use_container_width=True)
                                 last_rendered_attachment = img_key
 
-                        # 題目採用多行自動折行 SVG，字體 22px 加粗清晰
                         st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=50), unsafe_allow_html=True)
                         
-                        # 選項採用單行 20px SVG
                         opts_html = f"""
                         * **A)** {option_to_svg(opts['A'], font_size=20)}
                         * **B)** {option_to_svg(opts['B'], font_size=20)}
@@ -455,10 +447,8 @@ if current_test_id:
                         """
                         st.markdown(opts_html, unsafe_allow_html=True)
                         
-                        # 選擇單選鈕
                         user_ans = st.radio("請選擇正確答案：", ["A", "B", "C", "D"], key=f"radio_{q_id}")
                         
-                        # 判斷得分與記錄 (配分：每題 5.88 分，共 100 分)
                         if user_ans == corr_ans:
                             score += (100.0 / len(QUIZ_DATA))
                             ans_records.append(f"Q{idx+1}:⭕ ({user_ans})")
@@ -501,7 +491,7 @@ if current_test_id:
             st.success("🎉 測驗已順利完成！")
 
 # -------------------------------------------------------------------------
-# 🔀 情境 B：網址無參數 -> 進入【HR 人資管理後台】
+# 🔀 情境 B：HR 管理後台
 # -------------------------------------------------------------------------
 else:
     st.title("🏢 人資測評管理系統")
@@ -535,13 +525,12 @@ else:
                         
                         st.subheader("📋 隨機測驗連結：")
                         st.code(quiz_url, language="text")
-                        st.info("💡 請直接複製上方連結寄發給應徵者，應徵者開啟後將自動鎖定身分。")
+                        st.info("💡 請複製上方連結寄發給應徵者。")
                     else:
                         st.warning("⚠️ 請完整填寫應徵者姓名與部門！")
 
         with tab2:
             conn = get_db_connection()
-            
             st.subheader("📜 測驗派發紀錄表 (SQLite: tests)")
             df_tests = pd.read_sql_query("SELECT * FROM tests ORDER BY created_time DESC", conn)
             st.dataframe(df_tests, use_container_width=True)
@@ -549,11 +538,7 @@ else:
             st.subheader("🏆 應試者成績與行為日誌表 (SQLite: results)")
             df_results = pd.read_sql_query("SELECT * FROM results ORDER BY submit_time DESC", conn)
             st.dataframe(df_results, use_container_width=True)
-            
             conn.close()
                 
-    elif hr_password:
-        st.error("密碼錯誤，請重新輸入！")
-        st.error("密碼錯誤，請重新輸入！")
     elif hr_password:
         st.error("密碼錯誤，請重新輸入！")
