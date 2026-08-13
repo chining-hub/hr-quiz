@@ -9,6 +9,90 @@ from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
 
 # =========================================================================
+# 📚 0. 英文 13 題多益題庫資料結構
+# =========================================================================
+QUIZ_DATA = [
+    {
+        "id": "q1",
+        "question": "1. Many problems with locks ------ by a simple repair or adjustment.",
+        "options": {"A": "solved", "B": "could solve", "C": "can solve", "D": "can be solved"},
+        "answer": "D"
+    },
+    {
+        "id": "q2",
+        "question": "2. A fine of $200 will be imposed upon any drivers ------ park illegally downtown during the holiday parade.",
+        "options": {"A": "which", "B": "whose", "C": "whom", "D": "who"},
+        "answer": "D"
+    },
+    {
+        "id": "q3",
+        "question": "3. The Eisenweg Foundation will soon ------ its funding of external scientific research into several new domains, including genetics and endangered languages.",
+        "options": {"A": "exalt", "B": "exclaim", "C": "expel", "D": "expand"},
+        "answer": "D"
+    },
+    {
+        "id": "q4",
+        "question": "4. Mobile phones have become ------ prevalent that telecommunications companies are establishing service in areas previously thought too remote.",
+        "options": {"A": "only", "B": "such", "C": "so", "D": "still"},
+        "answer": "C"
+    },
+    {
+        "id": "q5",
+        "question": "5. In recognition of Elaine Tang’s exceptional service to ------ company, the human resources director will honor her at tonight’s employee awards ceremony.",
+        "options": {"A": "ours", "B": "our", "C": "us", "D": "we"},
+        "answer": "B"
+    },
+    {
+        "id": "q6",
+        "question": "6. Our overseas branch office is ------ to open in Taipei next month.",
+        "options": {"A": "scheduled", "B": "advanced", "C": "informed", "D": "maintained"},
+        "answer": "A"
+    },
+    {
+        "id": "q7",
+        "question": "7. The afternoon flight from Tokyo has been canceled ------ a mechanical problem.",
+        "options": {"A": "as much as", "B": "due to", "C": "because", "D": "in case"},
+        "answer": "B"
+    },
+    {
+        "id": "q8",
+        "question": "8. Mr. Martin has decided to ------ the planning meeting because of a scheduling conflict.",
+        "options": {"A": "evaluate", "B": "postpone", "C": "refer", "D": "identify"},
+        "answer": "B"
+    },
+    {
+        "id": "q9",
+        "question": "9. Following her ------ to sales director, Ms. Lin assumed responsibility for the firm’s marketing activities.",
+        "options": {"A": "development", "B": "delivery", "C": "promotion", "D": "acceptance"},
+        "answer": "C"
+    },
+    {
+        "id": "q10",
+        "question": "10. In the Western world, second only to New Year’s Day, Christmas is perhaps the ------ holiday.",
+        "options": {"A": "widely most celebrated", "B": "most widely celebrated", "C": "widely celebrated most", "D": "most celebrated widely"},
+        "answer": "B"
+    },
+    {
+        "id": "q11",
+        "question": "11. Covering more than 9 million square kilometers in northern Africa, the Sahara Desert ------ from the Atlantic Ocean to the Red Sea.",
+        "options": {"A": "contains", "B": "differs", "C": "extends", "D": "rises"},
+        "answer": "C"
+    },
+    {
+        "id": "q12",
+        "question": "12. Payment of monthly parking vouchers can be made either by personal check ------ by automatic withdrawal from a bank account.",
+        "options": {"A": "but", "B": "and", "C": "or", "D": "if"},
+        "answer": "C"
+    },
+    {
+        "id": "q13",
+        "question": "13. To safeguard the factory from being further burglarized, it is decided that new detection equipment is to be -------.",
+        "options": {"A": "founded", "B": "called", "C": "purchased", "D": "confiscated"},
+        "answer": "C"
+    }
+]
+
+# =========================================================================
 # 🗄️ 1. SQLite 資料庫自動建表與讀寫模組
 # =========================================================================
 DB_NAME = "quiz_database.db"
@@ -42,7 +126,7 @@ def init_sqlite_db():
             name TEXT,
             dept TEXT,
             exam_type TEXT,
-            score INTEGER,
+            score REAL,
             submit_time TEXT,
             duration_seconds INTEGER,
             details TEXT,
@@ -87,7 +171,6 @@ def sync_to_google_sheets(data_dict):
         )
         urllib.request.urlopen(req, timeout=5)
     except Exception as e:
-        # 即使網路異常， SQLite 已優先寫入，不影響應試者前端體驗
         print(f"Google Sheets 同步失敗: {e}")
 
 def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, duration_sec, details_str, cheat_logs):
@@ -216,7 +299,6 @@ if current_test_id:
 
         if exam_type == "英文測驗":
             inject_anti_cheat_script()
-            
 
         is_time_up = False
         if exam_type == "數學測驗":
@@ -240,117 +322,54 @@ if current_test_id:
 
         if not st.session_state.submitted:
             with st.form("exam_form"):
-                score = 0
+                score = 0.0
                 ans_records = []
                 
+                # ------------------- 英文測驗（13題完整渲染）-------------------
                 if exam_type == "英文測驗":
-                    st.markdown(text_to_svg("PART 1. Vocabulary Test (詞彙測驗，每題3.5分) ", font_size=20, height=40), unsafe_allow_html=True)
-                    st.markdown(text_to_svg("1.	Many problems with locks ------ by a simple repair or adjustment.", font_size=20, height=40), unsafe_allow_html=True)
-                    
-                    st.markdown(f"""
-                    * **A)** {text_to_svg("solved")}
-                    * **B)** {text_to_svg("could solve")}
-                    * **C)** {text_to_svg("can solve")}
-                    * **D)** {text_to_svg("can be solved")}
-                    """, unsafe_allow_html=True)
-                    
-                    q1 = st.radio("請選擇  正確答案：", ["A", "B", "C", "D"], key="q1_radio")
-                    
-                    if q1 == "D":
-                        score += 3.5
-                        ans_records.append("Q1:⭕ (選擇: (D)	can be solved)")
-                    else:
-                        ans_records.append(f"Q1:❌ (選擇: {q1})")
-                    st.markdown(text_to_svg("2.	A fine of $200 will be imposed upon any drivers ------ park illegally downtown during the holiday parade.", font_size=20, height=40), unsafe_allow_html=True)
-                    
-                    st.markdown(f"""
-                    * **A)** {text_to_svg("which")}
-                    * **B)** {text_to_svg("whose")}
-                    * **C)** {text_to_svg("whom")}
-                    * **D)** {text_to_svg("who")}
-                    """, unsafe_allow_html=True)
-                    
-                    q1 = st.radio("請選擇  正確答案：", ["A", "B", "C", "D"], key="q2_radio")
-                    
-                    if q1 == "D":
-                        score += 3.5
-                        ans_records.append("Q1:⭕ (選擇: (D)	who)")
-                    else:
-                        ans_records.append(f"Q1:❌ (選擇: {q2})")
-                    st.markdown(text_to_svg("3.	The Eisenweg Foundation will soon ------ its funding of external scientific research into several new domains, including genetics and endangered languages.", font_size=20, height=40), unsafe_allow_html=True)
-                    
-                    st.markdown(f"""
-                    * **A)** {text_to_svg("exalt")}
-                    * **B)** {text_to_svg("exclaim")}
-                    * **C)** {text_to_svg("expel")}
-                    * **D)** {text_to_svg("expand")}
-                    """, unsafe_allow_html=True)
-                    
-                    q1 = st.radio("請選擇  正確答案：", ["A", "B", "C", "D"], key="q3_radio")
-                    
-                    if q1 == "D":
-                        score += 3.5
-                        ans_records.append("Q1:⭕ (選擇: (D)    expand)")
-                    else:
-                        ans_records.append(f"Q1:❌ (選擇: {q3})")
-                    st.markdown(text_to_svg("4.	Mobile phones have become ------ prevalent that telecommunications companies are establishing service in areas previously though too remote.", font_size=20, height=40), unsafe_allow_html=True)
-                    
-                    st.markdown(f"""
-                    * **A)** {text_to_svg("only")}
-                    * **B)** {text_to_svg("such")}
-                    * **C)** {text_to_svg("so")}
-                    * **D)** {text_to_svg("still")}
-                    """, unsafe_allow_html=True)
-                    
-                    q1 = st.radio("請選擇  正確答案：", ["A", "B", "C", "D"], key="q4_radio")
-                    
-                    if q1 == "C":
-                        score += 3.5
-                        ans_records.append("Q1:⭕ (選擇: (C)	so)")
-                    else:
-                        ans_records.append(f"Q1:❌ (選擇: {q4})")
-                    st.markdown(text_to_svg("5.	In recognition of Elaine Tang’s exceptional service to ------ company, the human resources director will honor her at tonight’s employee awards ceremony.", font_size=20, height=40), unsafe_allow_html=True)
-                    
-                    st.markdown(f"""
-                    * **A)** {text_to_svg("ours")}
-                    * **B)** {text_to_svg("our")}
-                    * **C)** {text_to_svg("us")}
-                    * **D)** {text_to_svg("we")}
-                    """, unsafe_allow_html=True)
-                    
-                    q1 = st.radio("請選擇  正確答案：", ["A", "B", "C", "D"], key="q5_radio")
-                    
-                    if q1 == "B":
-                        score += 3.5
-                        ans_records.append("Q1:⭕ (選擇: (B)	our)")
-                    else:
-                        ans_records.append(f"Q1:❌ (選擇: {q5})")
-                    
-                    
-
-
+                    st.markdown(text_to_svg("PART 1. English Vocabulary & Grammar Test (每題 3.5 分)", font_size=20, height=40), unsafe_allow_html=True)
                     st.divider()
 
-                    st.markdown(text_to_svg("Q2. Reading Comprehension:", font_size=20, height=40), unsafe_allow_html=True)
-                    st.markdown(text_to_svg("What does 'ATS' stand for in modern HR?", font_size=18, height=35), unsafe_allow_html=True)
-                    
-                    st.markdown(f"""
-                    * **A)** {text_to_svg("Applicant Tracking System")}
-                    * **B)** {text_to_svg("Automated Testing Service")}
-                    * **C)** {text_to_svg("Annual Team Strategy")}
-                    """, unsafe_allow_html=True)
-                    
-                  
+                    for idx, q_item in enumerate(QUIZ_DATA):
+                        q_id = q_item["id"]
+                        q_text = q_item["question"]
+                        opts = q_item["options"]
+                        corr_ans = q_item["answer"]
 
-                    st.subheader("Q2. 比例計算：")
-                    q2 = st.radio("一件商品原價 2,000 元，打八折後是多少元？", [1400, 1600, 1800], disabled=is_time_up)
-                    if q2 == 1600:
-                        score += 50
-                        ans_records.append("Q2:⭕ (選擇: 1600)")
+                        # 渲染題目 SVG
+                        st.markdown(text_to_svg(q_text, font_size=18, height=35), unsafe_allow_html=True)
+                        
+                        # 渲染選項 SVG
+                        opts_html = f"""
+                        * **A)** {text_to_svg(opts['A'])}
+                        * **B)** {text_to_svg(opts['B'])}
+                        * **C)** {text_to_svg(opts['C'])}
+                        * **D)** {text_to_svg(opts['D'])}
+                        """
+                        st.markdown(opts_html, unsafe_allow_html=True)
+                        
+                        # 選擇單選鈕
+                        user_ans = st.radio("請選擇正確答案：", ["A", "B", "C", "D"], key=f"radio_{q_id}")
+                        
+                        # 判斷得分與記錄
+                        if user_ans == corr_ans:
+                            score += 3.5
+                            ans_records.append(f"Q{idx+1}:⭕ ({user_ans})")
+                        else:
+                            ans_records.append(f"Q{idx+1}:❌ ({user_ans})")
+                        
+                        st.divider()
+
+                # ------------------- 數學測驗 -------------------
+                elif exam_type == "數學測驗":
+                    st.subheader("Q1. 比例計算：")
+                    q_math1 = st.radio("一件商品原價 2,000 元，打八折後是多少元？", [1400, 1600, 1800], disabled=is_time_up, key="qm1_radio")
+                    if q_math1 == 1600:
+                        score += 100.0
+                        ans_records.append("Q1:⭕ (選擇: 1600)")
                     else:
-                        ans_records.append(f"Q2:❌ (選擇: {q2})")
+                        ans_records.append(f"Q1:❌ (選擇: {q_math1})")
 
-                
                 btn_label = "🚨 時間已到，強制交卷" if is_time_up else "🚀 確認交卷"
                 btn_submit = st.form_submit_button(btn_label, type="primary", use_container_width=True)
                 
