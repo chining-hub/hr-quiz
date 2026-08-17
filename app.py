@@ -382,16 +382,13 @@ def sync_to_google_sheets(data_dict):
         req = urllib.request.Request(
             url,
             data=json.dumps(data_dict).encode('utf-8'),
-            headers={'Content-Type': 'application/json'},import streamlit as st
-import pandas as pd
-import sqlite3
-import secrets
-import base64
-import json
-import os
-import urllib.request
-from datetime import datetime
-from streamlit_autorefresh import st_autorefresh
+            headers={'Content-Type': 'application/json'},
+            method='POST'
+        )
+        with urllib.request.urlopen(req, timeout=5) as response:
+            pass
+    except Exception as e:
+        print(f"Google Sheets 同步失敗: {e}")
 
 # =========================================================================
 # 🖼️ 閱讀測驗附件圖片安全載入器
