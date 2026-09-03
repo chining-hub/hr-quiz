@@ -512,12 +512,54 @@ if "user_answers" not in st.session_state:
     st.session_state.user_answers = {}
 if "quiz_submitted" not in st.session_state:
     st.session_state.quiz_submitted = False
+if "hr_logged_in" not in st.session_state:
+    st.session_state.hr_logged_in = False
 
 # -------------------------------------------------------------------------
-# 登入畫面
+# 1. 人資後台頁面
 # -------------------------------------------------------------------------
-if not st.session_state.logged_in:
+if st.session_state.hr_logged_in:
+    st.title("📊 人資管理後台")
+    st.write("在此可檢視所有考生的測驗成績與作答紀錄。")
+    
+    if st.button("⬅️ 返回首頁 / 考生登入"):
+        st.session_state.hr_logged_in = False
+        st.rerun()
+        
+    st.markdown("---")
+    
+    conn = get_db_connection()
+    df_results = pd.read_sql("SELECT * FROM results ORDER BY submit_time DESC", conn)
+    df_tests = pd.read_sql("SELECT * FROM tests ORDER BY created_time DESC", conn)
+    conn.close()
+    
+    st.subheader("📋 所有考生交卷紀錄")
+    if not df_results.empty:
+        st.dataframe(df_results, use_container_width=True)
+        
+        # 下載 CSV 按鈕
+        csv_data = df_results.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label="📥 下載成績報表 (CSV)",
+            data=csv_data,
+            file_name=f"quiz_results_{datetime.now().strftime('%Y%m%d')}.csv",
+            mime="text/csv"
+        )
+    else:目前尚無任何交卷紀錄。")
+    
+    st.markdown("---")
+    st.subheader("📑 測驗發放總表")
+    if not df_tests.empty:
+        st.dataframe(df_tests, use_container_width=True)
+    else:
+        st.info("目前尚無測驗發放紀錄。")
+
+# -------------------------------------------------------------------------
+# 2. 考生登入畫面
+# -------------------------------------------------------------------------
+elif not st.session_state.logged_in:
     st.title("📝 線上測驗系統登入")
+    
     with st.form("login_form"):
         name = st.text_input("真實姓名")
         dept = st.text_input("部門／班級")
@@ -539,8 +581,19 @@ if not st.session_state.logged_in:
             else:
                 st.warning("⚠️ 請完整填寫姓名與部門！")
 
+    st.markdown("---")
+    with st.expander("🔐 人資管理員登入"):
+        hr_password = st.text_input("請輸入人資密碼", type="password")
+        if st.button("登入人資後台"):
+            # 您可在此自訂密碼
+            if hr_password == "hr12345":
+                st.session_state.hr_logged_in = True
+                st.rerun()
+            else:
+                st.error("❌ 密碼錯誤！")
+
 # -------------------------------------------------------------------------
-# 測驗作答畫面（一題一題呈現）
+# 3. 測驗作答畫面（一題一題呈現）
 # -------------------------------------------------------------------------
 elif st.session_state.logged_in and not st.session_state.quiz_submitted:
     exam_type = st.session_state.exam_type
@@ -638,7 +691,7 @@ elif st.session_state.logged_in and not st.session_state.quiz_submitted:
                 st.rerun()
 
 # -------------------------------------------------------------------------
-# 交卷完成畫面
+# 4. 交卷完成畫面
 # -------------------------------------------------------------------------
 elif st.session_state.quiz_submitted:
     st.success("🎉 測驗已成功繳交！")
@@ -656,7 +709,7 @@ elif st.session_state.quiz_submitted:
     st.write(f"### 考試科目：{exam_type}")
     st.write(f"### 最終得分：**{score} 分**（答對 {correct_count} 題 / 共 {total_questions} 題）")
     
-    if st.button("重新測驗"):
+    if st.button("返回首頁"):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.rerun()
