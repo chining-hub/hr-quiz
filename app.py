@@ -855,4 +855,4 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
                     current_capacity = word_capacity
 
         if current_line:
-            lines.append(current_lin
+ 
