@@ -1,4 +1,4 @@
-import streamlit as st
+ import streamlit as st
 import pandas as pd
 import sqlite3
 import secrets
@@ -8,13 +8,6 @@ import os
 import urllib.request
 from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
-
-# 初始化測驗狀態
-if "current_q_idx" not in st.session_state:
-    st.session_state.current_q_idx = 0
-
-if "user_answers" not in st.session_state:
-    st.session_state.user_answers = {}
 
 # =========================================================================
 # 🖼️ 閱讀測驗附件圖片安全載入器
@@ -37,59 +30,6 @@ def display_quiz_image(image_filename, alt_caption):
         st.image(img_b64, caption=alt_caption, use_container_width=True)
     else:
         st.error(f"⚠️ 找不到圖片檔案：`{image_filename}`！請確認該圖片是否已放置在與 `app.py` 同一個資料夾內，並已 Git Push 上傳。")
-
-# 假設您的題庫變數叫做 quiz_data
-total_questions = len(quiz_data)
-
-# 顯示進度
-st.write(f"**目前進度：第 {st.session_state.current_q_idx + 1} 題 / 共 {total_questions} 題**")
-
-# 取得目前這一題的資料
-current_q = quiz_data[st.session_state.current_q_idx]
-q_id = current_q["id"]
-
-# 顯示題目
-st.markdown(f"### {current_q['question']}")
-
-# 處理選項與記錄作答（確保切換頁面時答案不會不見）
-options_list = list(current_q["options"].keys())
-default_option = st.session_state.user_answers.get(q_id, None)
-default_index = options_list.index(default_option) if default_option in options_list else 0
-
-selected_option = st.radio(
-    "請選擇答案：",
-    options_list,
-    index=default_index,
-    format_func=lambda x: f"({x}) {current_q['options'][x]}",
-    key=f"radio_{q_id}"
-)
-
-# 即時存入字典
-st.session_state.user_answers[q_id] = selected_option
-
-st.markdown("---")
-col1, col2, col3 = st.columns([1, 1, 1])
-
-# 上一題按鈕（如果是第一題就不顯示）
-with col1:
-    if st.session_state.current_q_idx > 0:
-        if st.button("⬅️ 上一題", use_container_width=True):
-            st.session_state.current_q_idx -= 1
-            st.rerun()
-
-# 下一題或交卷按鈕
-with col3:
-    if st.session_state.current_q_idx < total_questions - 1:
-        if st.button("下一題 ➡️", use_container_width=True):
-            st.session_state.current_q_idx += 1
-            st.rerun()
-    else:
-        # 最後一題顯示交卷
-        if st.button("✅ 確認交卷", type="primary", use_container_width=True):
-            # 這裡放您原本的交卷、計分與寫入資料庫邏輯
-            st.success("交卷成功！")
-            st.session_state.quiz_submitted = True
-            st.rerun()
 
 # =========================================================================
 # 📚 題庫資料結構 (英文 17 題 / 數學 27 題)
@@ -1202,4 +1142,4 @@ else:
             conn.close()
                 
     elif hr_password:
-        st.error("密碼錯誤，請重新輸入！")
+        st.error("密碼錯誤，請重新輸入！")5
