@@ -992,84 +992,141 @@ if current_test_id:
                 is_time_up = True
                 st.error("⏰ **測驗時間已到！** 系統已鎖定作答，請點擊下方按鈕進行強制交卷。")
 
+ # 初始化測驗相關狀態
         if "submitted" not in st.session_state:
             st.session_state.submitted = False
+            
+        if "current_q_idx" not in st.session_state:
+            st.session_state.current_q_idx = 0
+            
+        if "user_answers" not in st.session_state:
+            st.session_state.user_answers = {}
 
         if not st.session_state.submitted:
-            with st.form("exam_form"):
-                score = 0.0
-                ans_records = []
+            # 1. 決定目前要考哪一份題庫
+            if exam_type == "英文測驗":
+                current_quiz_data = ENGLISH_QUIZ_DATA
+            else:
+                current_quiz_data = MATH_QUIZ_DATA
                 
-                # ------------------- 英文測驗 -------------------
-                if exam_type == "英文測驗":
+            total_questions = len(current_quiz_data)
+            current_idx = st.session_state.current_q_idx
+
+            # 顯示進度
+            st.progress((current_idx + 1) / total_questions)
+            st.write(f"**目前進度：第 {current_idx + 1} 題 / 共 {total_questions} 題**")
+            st.divider()
+
+            # 英文測驗 Part 標題提示
+            if exam_type == "英文測驗":
+                if current_idx == 0:
                     st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
                     st.divider()
-
-                    last_rendered_attachment = None
-
-                    for idx, q_item in enumerate(ENGLISH_QUIZ_DATA):
-                        q_id = q_item["id"]
-                        q_text = q_item["question"]
-                        opts = q_item["options"]
-                        corr_ans = q_item["answer"]
-
-                        if idx == 13:
-                            st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
-                            st.divider()
-
-                        if "image_key" in q_item:
-                            img_key = q_item["image_key"]
-                            if img_key != last_rendered_attachment:
-                                st.info("📌 請根據下方文章/圖表內容回答問題：")
-                                if img_key == "attachment1":
-                                    display_quiz_image("題目1.png", "[附件一] Valentino's Corner 廣告")
-                                elif img_key == "attachment2":
-                                    display_quiz_image("題目2.png", "[附件二] Yearly Consumption of Animal Products")
-                                last_rendered_attachment = img_key
-
-                        st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=50), unsafe_allow_html=True)
-                        
-                        opts_html = "".join([f"* **{k})** {option_to_svg(v, font_size=20)}<br/>" for k, v in opts.items()])
-                        st.markdown(opts_html, unsafe_allow_html=True)
-                        
-                        user_ans = st.radio("請選擇正確答案：", list(opts.keys()), key=f"radio_{q_id}")
-                        
-                        if user_ans == corr_ans:
-                            score += (100.0 / len(ENGLISH_QUIZ_DATA))
-                            ans_records.append(f"Q{idx+1}:⭕ ({user_ans})")
-                        else:
-                            ans_records.append(f"Q{idx+1}:❌ ({user_ans})")
-                        
-                        st.divider()
-
-                # ------------------- 數學測驗 (1-27題) -------------------
-                elif exam_type == "數學測驗":
-                    st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
+                elif current_idx == 13:
+                    st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
                     st.divider()
+            elif exam_type == "數學測驗" and current_idx == 0:
+                st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
+                st.divider()
 
-                    for idx, q_item in enumerate(MATH_QUIZ_DATA):
-                        q_id = q_item["id"]
-                        q_text = q_item["question"]
-                        opts = q_item["options"]
-                        corr_ans = q_item["answer"]
+            # 2. 抓出當前這一題
+            q_item = current_quiz_data[current_idx]
+            q_id = q_item["id"]
+            q_text = q_item["question"]
+            opts = q_item["options"]
+            corr_ans = q_item["answer"]
 
-                        st.markdown(text_to_multiline_svg(q_text, font_size=20, max_chars_per_line=45), unsafe_allow_html=True)
-                        
-                        opts_html = "".join([f"* **({k})** {option_to_svg(v, font_size=18)}<br/>" for k, v in opts.items()])
-                        st.markdown(opts_html, unsafe_allow_html=True)
-                        
-                        user_ans = st.radio("請選擇正確答案：", list(opts.keys()), key=f"m_radio_{q_id}", disabled=is_time_up)
-                        
-                        if user_ans == corr_ans:
-                            score += 2.5  # 每題 2.5 分
-                            ans_records.append(f"Q{idx+1}:⭕ ({user_ans})")
-                        else:
-                            ans_records.append(f"Q{idx+1}:❌ ({user_ans})")
-                        
-                        st.divider()
+            # 圖片處理 (英文閱讀測驗專用)
+            if exam_type == "英文測驗" and "image_key" in q_item:
+                img_key = q_item["image_key"]
+                st.info("📌 請根據下方文章/圖表內容回答問題：")
+                if img_key == "attachment1":
+                    display_quiz_image("題目1.png", "[附件一] Valentino's Corner 廣告")
+                elif img_key == "attachment2":
+                    display_quiz_image("題目2.png", "[附件二] Yearly Consumption of Animal Products")
 
-                btn_label = "🚨 時間已到，強制交卷" if is_time_up else "🚀 確認交卷"
-                btn_submit = st.form_submit_button(btn_label, type="primary", use_container_width=True)
+            # 顯示題目與選項
+            st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=50), unsafe_allow_html=True)
+            
+            if exam_type == "英文測驗":
+                opts_html = "".join([f"* **{k})** {option_to_svg(v, font_size=20)}<br/>" for k, v in opts.items()])
+            else:
+                opts_html = "".join([f"* **({k})** {option_to_svg(v, font_size=18)}<br/>" for k, v in opts.items()])
+            st.markdown(opts_html, unsafe_allow_html=True)
+
+            # 讀取先前已選的答案（若有）以還原 radio 預設選項
+            opts_keys = list(opts.keys())
+            saved_ans = st.session_state.user_answers.get(q_id, None)
+            default_idx = opts_keys.index(saved_ans) if saved_ans in opts_keys else 0
+
+            user_ans = st.radio(
+                "請選擇正確答案：", 
+                opts_keys, 
+                index=default_idx, 
+                key=f"radio_{q_id}", 
+                disabled=is_time_up
+            )
+            
+            # 即時將答案存入 session_state
+            st.session_state.user_answers[q_id] = user_ans
+
+            st.divider()
+
+            # 3. 上一題 / 下一題 / 交卷 控制按鈕列
+            col_prev, col_space, col_next = st.columns([1, 2, 1])
+
+            with col_prev:
+                if current_idx > 0:
+                    if st.button("⬅️ 上一題", use_container_width=True):
+                        st.session_state.current_q_idx -= 1
+                        st.rerun()
+
+            with col_next:
+                if current_idx < total_questions - 1:
+                    if st.button("下一題 ➡️", use_container_width=True):
+                        st.session_state.current_q_idx += 1
+                        st.rerun()
+                else:
+                    # 最後一題：顯示交卷按鈕
+                    btn_label = "🚨 時間已到，強制交卷" if is_time_up else "🚀 確認交卷"
+                    if st.button(btn_label, type="primary", use_container_width=True):
+                        # --- 計算總分與結果 ---
+                        score = 0.0
+                        ans_records = []
+                        
+                        for idx, item in enumerate(current_quiz_data):
+                            qid = item["id"]
+                            c_ans = item["answer"]
+                            u_ans = st.session_state.user_answers.get(qid, None)
+                            
+                            if exam_type == "英文測驗":
+                                q_score = 100.0 / len(current_quiz_data)
+                            else:
+                                q_score = 2.5
+
+                            if u_ans == c_ans:
+                                score += q_score
+                                ans_records.append(f"Q{idx+1}:⭕ ({u_ans})")
+                            else:
+                                ans_records.append(f"Q{idx+1}:❌ ({u_ans})")
+
+                        end_time = datetime.now()
+                        duration_sec = int((end_time - st.session_state[start_key]).total_seconds())
+                        
+                        details_str = " | ".join(ans_records)
+                        if is_time_up:
+                            details_str += " [系統備註: 逾時強制交卷]"
+                        cheat_logs = f"總花費時間: {duration_sec} 秒"
+                        
+                        mark_test_completed_and_save_result(
+                            current_test_id, cand_name, cand_dept, exam_type, 
+                            round(score, 1), duration_sec, details_str, cheat_logs
+                        )
+                        st.session_state.submitted = True
+                        st.rerun()
+        else:
+            st.balloons()
+            st.success("🎉 測驗已順利完成！")
                 
                 if btn_submit:
                     end_time = datetime.now()
