@@ -1,4 +1,4 @@
-我的程式碼為:import streamlit as st
+import streamlit as st
 import pandas as pd
 import sqlite3
 import secrets
