@@ -993,7 +993,7 @@ if current_test_id:
                 st.error("⏰ **測驗時間已到！** 系統已鎖定作答，請點擊下方按鈕進行強制交卷。")
 
 # 初始化測驗相關狀態
-if "submitted" not in st.session_state:
+        if "submitted" not in st.session_state:
             st.session_state.submitted = False
             
         if "current_q_idx" not in st.session_state:
