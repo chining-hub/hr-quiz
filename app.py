@@ -459,11 +459,11 @@ import textwrap
 # =========================================================================
 # 🛡️ 2. SVG 向量圖像化與防偷看腳本 (強制指定字數斷行版)
 # =========================================================================
-def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 65) -> str:
+def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 45) -> str:
     # 1. 清理多餘空白與強制換行
     clean_text = " ".join(text.replace("\n", " ").split())
     
-    # 2. 強制每隔 max_chars_per_line 個字就切一行，絕不讓標點符號孤單
+    # 2. 限制每行最大字數，確保絕對不會超出畫面
     lines = []
     for i in range(0, len(clean_text), max_chars_per_line):
         lines.append(clean_text[i:i + max_chars_per_line])
@@ -473,7 +473,6 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
         
     line_height = font_size * 1.5
     svg_height = int(len(lines) * line_height + 20)
-    svg_width = 950  # 設定適中的安全畫布寬度
     
     tspan_elements = ""
     for idx, line in enumerate(lines):
@@ -481,7 +480,7 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
         safe_line = line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         tspan_elements += f'<tspan x="10" y="{y_pos}">{safe_line}</tspan>'
         
-    svg_code = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{svg_width}" height="{svg_height}" viewBox="0 0 {svg_width} {svg_height}">
+    svg_code = f'''<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="{svg_height}" viewBox="0 0 950 {svg_height}">
         <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="{font_size}px" font-weight="600" fill="#111827">
             {tspan_elements}
         </text>
@@ -613,13 +612,13 @@ if current_test_id:
 
             if exam_type == "英文測驗":
                 if current_idx == 0:
-                    st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_chars_per_line=65), unsafe_allow_html=True)
+                    st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_chars_per_line=50), unsafe_allow_html=True)
                     st.divider()
                 elif current_idx == 13:
-                    st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=65), unsafe_allow_html=True)
+                    st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=50), unsafe_allow_html=True)
                     st.divider()
             elif exam_type == "數學測驗" and current_idx == 0:
-                st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_chars_per_line=65), unsafe_allow_html=True)
+                st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_chars_per_line=50), unsafe_allow_html=True)
                 st.divider()
 
             q_item = current_quiz_data[current_idx]
@@ -638,7 +637,7 @@ if current_test_id:
                     elif img_key == "attachment2":
                         display_quiz_image("題目2.png", "[附件二] Yearly Consumption of Animal Products")
 
-                st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=65), unsafe_allow_html=True)
+                st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=50), unsafe_allow_html=True)
                 
                 # 選項統一使用 font_size=20 進行渲染
                 opts_html = "".join([f"* **{k})** {option_to_svg(v, font_size=20)}<br/>" for k, v in opts.items()])
