@@ -466,7 +466,7 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_svg_width: int = 8
     raw_paragraphs = text.split("\n")
     lines = []
     
-    EN_WIDTH_RATIO = 0.48
+    EN_WIDTH_RATIO = 0.47
     
     for para in raw_paragraphs:
         if not para.strip():
