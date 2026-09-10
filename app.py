@@ -466,8 +466,7 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_svg_width: int = 8
     raw_paragraphs = text.split("\n")
     lines = []
     
-    # 這裡可以微調！越小代表英文越晚換行 (原本是 0.55，現改為 0.42)
-    EN_WIDTH_RATIO = 0.42 
+    EN_WIDTH_RATIO = 0.4
     
     for para in raw_paragraphs:
         if not para.strip():
