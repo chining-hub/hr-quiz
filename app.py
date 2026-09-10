@@ -455,9 +455,9 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
 init_sqlite_db()
 
 # =========================================================================
-# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (已修正：調降每行最大字元數以防文字被切掉)
+# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (已修正：調降每行字數至 26 確保絕不被切掉)
 # =========================================================================
-def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 32) -> str:
+def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 26) -> str:
     lines_input = text.split("\n")
     lines = []
     max_capacity = max_chars_per_line * 2 
@@ -503,13 +503,14 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
             
     line_height = font_size * 1.5
     svg_height = int(len(lines) * line_height + 20)
-    svg_width = 720  # 固定畫布寬度確保字體大小一致
+    svg_width = 720  # 固定寬度確保所有題目字體大小 100% 相同
     
     tspan_elements = ""
     for idx, line in enumerate(lines):
         y_pos = int((idx + 1) * line_height)
         safe_line = line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        tspan_elements += f'<tspan x="0" y="{y_pos}">{safe_line}</tspan>'
+        # 增加 x="10" 留白內距，防止文字貼齊邊緣
+        tspan_elements += f'<tspan x="10" y="{y_pos}">{safe_line}</tspan>'
         
     svg_code = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{svg_width}" height="{svg_height}" viewBox="0 0 {svg_width} {svg_height}">
         <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="{font_size}px" font-weight="600" fill="#111827">
