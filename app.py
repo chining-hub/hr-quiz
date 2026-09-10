@@ -26,7 +26,7 @@ st.markdown("""
     .block-container {
         padding-top: 2.5rem;
         padding-bottom: 4rem;
-        max-width: 820px;
+        max-width: 900px;
     }
 
     /* 按鈕現代化圓角與互動感 */
@@ -455,7 +455,7 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
 init_sqlite_db()
 
 # =========================================================================
-# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (已修正：大幅擴增畫布至 1000 並縮減每行字數，徹底杜絕切字)
+# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (已修正：畫布 1000px，字數 18，徹底解決英文與數學切字與字體大小不一)
 # =========================================================================
 def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 18) -> str:
     lines_input = text.split("\n")
@@ -503,7 +503,7 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
             
     line_height = font_size * 1.5
     svg_height = int(len(lines) * line_height + 20)
-    svg_width = 1000  # 大幅擴增畫布寬度，提供極寬的安全邊距
+    svg_width = 1000  # 固定寬度確保所有題目字體大小 100% 相同，且有極寬安全邊距
     
     tspan_elements = ""
     for idx, line in enumerate(lines):
@@ -519,6 +519,7 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
     
     b64 = base64.b64encode(svg_code.encode('utf-8')).decode('utf-8')
     return f'<img src="data:image/svg+xml;base64,{b64}" style="vertical-align: middle; display: block; margin: 8px 0; width: 100%; height: auto;" />'
+
 def option_to_svg(text: str, font_size: int = 20) -> str:
     """選項統一設定為 font_size=20，讓英文與數學選項字體大小完全一致"""
     text_capacity = sum(2 if ord(c) > 127 else 1 for c in text)
@@ -643,13 +644,13 @@ if current_test_id:
 
             if exam_type == "英文測驗":
                 if current_idx == 0:
-                    st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_chars_per_line=50), unsafe_allow_html=True)
+                    st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_chars_per_line=30), unsafe_allow_html=True)
                     st.divider()
                 elif current_idx == 13:
-                    st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=50), unsafe_allow_html=True)
+                    st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=30), unsafe_allow_html=True)
                     st.divider()
             elif exam_type == "數學測驗" and current_idx == 0:
-                st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_chars_per_line=50), unsafe_allow_html=True)
+                st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_chars_per_line=30), unsafe_allow_html=True)
                 st.divider()
 
             q_item = current_quiz_data[current_idx]
@@ -668,7 +669,7 @@ if current_test_id:
                     elif img_key == "attachment2":
                         display_quiz_image("題目2.png", "[附件二] Yearly Consumption of Animal Products")
 
-                st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=45), unsafe_allow_html=True)
+                st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=18), unsafe_allow_html=True)
                 
                 # 選項統一使用 font_size=20 進行渲染
                 opts_html = "".join([f"* **{k})** {option_to_svg(v, font_size=20)}<br/>" for k, v in opts.items()])
