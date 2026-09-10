@@ -638,7 +638,7 @@ if current_test_id:
                     elif img_key == "attachment2":
                         display_quiz_image("題目2.png", "[附件二] Yearly Consumption of Animal Products")
 
-                st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=100), unsafe_allow_html=True)
+                st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=65), unsafe_allow_html=True)
                 
                 # 選項統一使用 font_size=20 進行渲染
                 opts_html = "".join([f"* **{k})** {option_to_svg(v, font_size=20)}<br/>" for k, v in opts.items()])
