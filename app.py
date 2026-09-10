@@ -993,7 +993,7 @@ if current_test_id:
                 st.error("⏰ **測驗時間已到！** 系統已鎖定作答，請點擊下方按鈕進行強制交卷。")
 
 # 初始化測驗相關狀態
-        if "submitted" not in st.session_state:
+if "submitted" not in st.session_state:
             st.session_state.submitted = False
             
         if "current_q_idx" not in st.session_state:
@@ -1003,7 +1003,6 @@ if current_test_id:
             st.session_state.user_answers = {}
 
         if not st.session_state.submitted:
-            # 1. 決定目前要考哪一份題庫
             if exam_type == "英文測驗":
                 current_quiz_data = ENGLISH_QUIZ_DATA
             else:
@@ -1012,12 +1011,10 @@ if current_test_id:
             total_questions = len(current_quiz_data)
             current_idx = st.session_state.current_q_idx
 
-            # 顯示進度
             st.progress((current_idx + 1) / total_questions)
             st.write(f"**目前進度：第 {current_idx + 1} 題 / 共 {total_questions} 題**")
             st.divider()
 
-            # 英文測驗 Part 標題提示
             if exam_type == "英文測驗":
                 if current_idx == 0:
                     st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
@@ -1029,14 +1026,12 @@ if current_test_id:
                 st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
                 st.divider()
 
-            # 2. 抓出當前這一題
             q_item = current_quiz_data[current_idx]
             q_id = q_item["id"]
             q_text = q_item["question"]
             opts = q_item["options"]
             corr_ans = q_item["answer"]
 
-            # 圖片處理 (英文閱讀測驗專用)
             if exam_type == "英文測驗" and "image_key" in q_item:
                 img_key = q_item["image_key"]
                 st.info("📌 請根據下方文章/圖表內容回答問題：")
@@ -1045,7 +1040,6 @@ if current_test_id:
                 elif img_key == "attachment2":
                     display_quiz_image("題目2.png", "[附件二] Yearly Consumption of Animal Products")
 
-            # 顯示題目與選項
             st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=50), unsafe_allow_html=True)
             
             if exam_type == "英文測驗":
@@ -1054,7 +1048,6 @@ if current_test_id:
                 opts_html = "".join([f"* **({k})** {option_to_svg(v, font_size=18)}<br/>" for k, v in opts.items()])
             st.markdown(opts_html, unsafe_allow_html=True)
 
-            # 讀取先前已選的答案（若有）以還原 radio 預設選項
             opts_keys = list(opts.keys())
             saved_ans = st.session_state.user_answers.get(q_id, None)
             default_idx = opts_keys.index(saved_ans) if saved_ans in opts_keys else 0
@@ -1067,12 +1060,9 @@ if current_test_id:
                 disabled=is_time_up
             )
             
-            # 即時將答案存入 session_state
             st.session_state.user_answers[q_id] = user_ans
-
             st.divider()
 
-            # 3. 上一題 / 下一題 / 交卷 控制按鈕列
             col_prev, col_space, col_next = st.columns([1, 2, 1])
 
             with col_prev:
@@ -1087,10 +1077,8 @@ if current_test_id:
                         st.session_state.current_q_idx += 1
                         st.rerun()
                 else:
-                    # 最後一題：顯示交卷按鈕
                     btn_label = "🚨 時間已到，強制交卷" if is_time_up else "🚀 確認交卷"
                     if st.button(btn_label, type="primary", use_container_width=True):
-                        # --- 計算總分與結果 ---
                         score = 0.0
                         ans_records = []
                         
