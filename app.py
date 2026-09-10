@@ -459,7 +459,7 @@ import textwrap
 # =========================================================================
 # 🛡️ 2. SVG 向量圖像化與防偷看腳本 (強制指定字數斷行版)
 # =========================================================================
-def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 100) -> str:
+def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 65) -> str:
     # 1. 清理多餘空白與強制換行
     clean_text = " ".join(text.replace("\n", " ").split())
     
