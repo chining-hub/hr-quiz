@@ -457,14 +457,17 @@ init_sqlite_db()
 import textwrap
 
 # =========================================================================
-# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (終極完美換行版)
+# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (強制指定字數斷行版)
 # =========================================================================
 def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 100) -> str:
-    # 1. 清理多餘空白與換行
+    # 1. 清理多餘空白與強制換行
     clean_text = " ".join(text.replace("\n", " ").split())
     
-    # 2. 使用 Python 內建的 textwrap 完美依單字長度自動斷行，絕不超出邊界
-    lines = textwrap.wrap(clean_text, width=max_chars_per_line)
+    # 2. 強制每隔 max_chars_per_line 個字就切一行，絕不讓標點符號孤單
+    lines = []
+    for i in range(0, len(clean_text), max_chars_per_line):
+        lines.append(clean_text[i:i + max_chars_per_line])
+        
     if not lines:
         lines = [clean_text]
         
@@ -486,7 +489,7 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
     
     b64 = base64.b64encode(svg_code.encode('utf-8')).decode('utf-8')
     return f'<img src="data:image/svg+xml;base64,{b64}" style="vertical-align: middle; display: block; margin: 8px 0; width: 100%; height: auto;" />'
-
+    
 def option_to_svg(text: str, font_size: int = 20) -> str:
     """選項統一設定為 font_size=20，讓英文與數學選項字體大小完全一致"""
     text_capacity = sum(2 if ord(c) > 127 else 1 for c in text)
