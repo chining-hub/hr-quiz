@@ -1128,22 +1128,22 @@ if current_test_id:
             st.balloons()
             st.success("🎉 測驗已順利完成！")
                 
-                if btn_submit:
-                    end_time = datetime.now()
-                    duration_sec = int((end_time - st.session_state[start_key]).total_seconds())
+            if btn_submit:
+                end_time = datetime.now()
+                duration_sec = int((end_time - st.session_state[start_key]).total_seconds())
                     
-                    details_str = " | ".join(ans_records)
-                    if is_time_up:
-                        details_str += " [系統備註: 逾時強制交卷]"
+                details_str = " | ".join(ans_records)
+                if is_time_up:
+                    details_str += " [系統備註: 逾時強制交卷]"
 
-                    cheat_logs = f"總花費時間: {duration_sec} 秒"
+                cheat_logs = f"總花費時間: {duration_sec} 秒"
                     
-                    mark_test_completed_and_save_result(
-                        current_test_id, cand_name, cand_dept, exam_type, 
-                        round(score, 1), duration_sec, details_str, cheat_logs
-                    )
-                    st.session_state.submitted = True
-                    st.rerun()
+                mark_test_completed_and_save_result(
+                    current_test_id, cand_name, cand_dept, exam_type, 
+                    round(score, 1), duration_sec, details_str, cheat_logs
+                )
+                st.session_state.submitted = True
+                st.rerun()
         else:
             st.balloons()
             st.success("🎉 測驗已順利完成！")
