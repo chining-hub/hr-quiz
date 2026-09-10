@@ -455,57 +455,17 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
 init_sqlite_db()
 
 # =========================================================================
-# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (已修正：恢復每行為 35 個字，解決文字擠在一起的問題)
+# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (已修正：整行到底，絕對不自動斷行)
 # =========================================================================
 def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 500) -> str:
-    text = text.replace("\n", " ")
-    lines_input = text.split("\n")
+    # 將所有內建的換行符號轉成空白，讓整段文字變成同一行
+    clean_text = " ".join(text.replace("\n", " ").split())
     
-    lines = []
-    max_capacity = max_chars_per_line * 2 
+    lines = [clean_text]  # 強制只保留為「單行」
     
-    for paragraph in lines_input:
-        words = paragraph.split(" ")
-        current_line = ""
-        current_capacity = 0
-        
-        for word in words:
-            word_capacity = sum(2 if ord(c) > 127 else 1 for c in word)
-            space_capacity = 1 if current_line else 0
-            
-            if current_capacity + space_capacity + word_capacity <= max_capacity:
-                if current_line:
-                    current_line += " " + word
-                else:
-                    current_line = word
-                current_capacity += space_capacity + word_capacity
-            else:
-                if word_capacity > max_capacity:
-                    if current_line:
-                        lines.append(current_line)
-                        current_line = ""
-                        current_capacity = 0
-                        
-                    for char in word:
-                        char_capacity = 2 if ord(char) > 127 else 1
-                        if current_capacity + char_capacity > max_capacity:
-                            lines.append(current_line)
-                            current_line = char
-                            current_capacity = char_capacity
-                        else:
-                            current_line += char
-                            current_capacity += char_capacity
-                else:
-                    if current_line:
-                        lines.append(current_line)
-                    current_line = word
-                    current_capacity = word_capacity
-        if current_line:
-            lines.append(current_line)
-            
     line_height = font_size * 1.5
     svg_height = int(len(lines) * line_height + 20)
-    svg_width = 1000  # 保持極寬安全畫布
+    svg_width = 1200  # 拉大畫布寬度，確保長句子絕對不會被擠壓
     
     tspan_elements = ""
     for idx, line in enumerate(lines):
@@ -521,56 +481,6 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
     
     b64 = base64.b64encode(svg_code.encode('utf-8')).decode('utf-8')
     return f'<img src="data:image/svg+xml;base64,{b64}" style="vertical-align: middle; display: block; margin: 8px 0; width: 100%; height: auto;" />'
-
-def option_to_svg(text: str, font_size: int = 20) -> str:
-    """選項統一設定為 font_size=20，讓英文與數學選項字體大小完全一致"""
-    text_capacity = sum(2 if ord(c) > 127 else 1 for c in text)
-    width = int(max(text_capacity * (font_size * 0.6) + 30, 320))
-    height = int(font_size * 1.6)
-    
-    safe_text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-    
-    svg_code = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
-        <text x="5" y="{font_size * 1.1}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="{font_size}px" font-weight="500" fill="#374151">{safe_text}</text>
-    </svg>'''
-    
-    b64 = base64.b64encode(svg_code.encode('utf-8')).decode('utf-8')
-    return f'<img src="data:image/svg+xml;base64,{b64}" style="vertical-align: middle; display: inline-block; margin: 2px 0;" />'
-
-def inject_anti_cheat_script():
-    st.markdown(
-        """
-        <script>
-            document.documentElement.setAttribute('translate', 'no');
-            document.documentElement.classList.add('notranslate');
-            if (document.body) {
-                document.body.setAttribute('translate', 'no');
-                document.body.classList.add('notranslate');
-            }
-            document.addEventListener('contextmenu', event => event.preventDefault());
-            document.addEventListener('copy', event => event.preventDefault());
-            document.addEventListener('cut', event => event.preventDefault());
-            document.addEventListener('keydown', function(e) {
-                if (e.ctrlKey && (e.key === 'c' || e.key === 'C' || e.key === 'x' || e.key === 'X' || 
-                                  e.key === 'a' || e.key === 'A' || e.key === 'u' || e.key === 'U' || 
-                                  e.key === 's' || e.key === 'S')) {
-                    e.preventDefault();
-                }
-                if (e.keyCode === 123) e.preventDefault();
-            });
-        </script>
-        <style>
-            * {
-                -webkit-user-select: none !important;
-                -moz-user-select: none !important;
-                -ms-user-select: none !important;
-                user-select: none !important;
-            }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
 # =========================================================================
 # ⚙️ 3. 頁面設定與路由判斷
 # =========================================================================
