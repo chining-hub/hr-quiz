@@ -456,10 +456,10 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
 init_sqlite_db()
 
 # =========================================================================
-# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (智慧型斷行版 - 保留 \n 與空白)
+# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (智慧型防護與矩陣對齊版)
 # =========================================================================
-def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 100) -> str:
-    # 1. 依照原本題目中的 \n 分割，完整保留手動換行（如數學矩陣、題組結構）
+def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 42) -> str:
+    # 1. 依照原本題目中的 \n 分割，完整保留手動換行
     raw_paragraphs = text.split("\n")
     lines = []
     
@@ -468,11 +468,17 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
             lines.append("")
             continue
         
-        # 2. 使用 textwrap 進行智慧型斷行，不強行切斷英文單字
+        # 2. 關鍵修正：若該行包含矩陣符號（如 [ ]）或含有連續空白（用於對齊），直接保留原樣不進行自動斷行
+        if "[" in para or "]" in para or "  " in para:
+            lines.append(para)
+            continue
+        
+        # 3. 針對一般文字進行智慧型斷行，確保英文單字不被切斷，且不刪除空白
         wrapped_lines = textwrap.wrap(
             para, 
             width=max_chars_per_line, 
             break_long_words=False, 
+            drop_whitespace=False,
             replace_whitespace=False
         )
         if wrapped_lines:
@@ -486,7 +492,7 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
     tspan_elements = ""
     for idx, line in enumerate(lines):
         y_pos = int((idx + 1) * line_height)
-        # 3. 將特殊符號轉義，並將空白轉為 SVG 支援的 &#160; 以保留矩陣對齊格式
+        # 4. 將特殊符號轉義，並將空白轉為 SVG 支援的 &#160; 以完整保留矩陣與縮排對齊格式
         safe_line = (
             line.replace("&", "&amp;")
                 .replace("<", "&lt;")
