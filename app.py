@@ -455,7 +455,7 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
 init_sqlite_db()
 
 # =========================================================================
-# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (已修正：整行到底，絕對不自動斷行)
+# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (完整修正版)
 # =========================================================================
 def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 500) -> str:
     # 將所有內建的換行符號轉成空白，讓整段文字變成同一行
@@ -481,6 +481,55 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
     
     b64 = base64.b64encode(svg_code.encode('utf-8')).decode('utf-8')
     return f'<img src="data:image/svg+xml;base64,{b64}" style="vertical-align: middle; display: block; margin: 8px 0; width: 100%; height: auto;" />'
+
+def option_to_svg(text: str, font_size: int = 20) -> str:
+    """選項統一設定為 font_size=20，讓英文與數學選項字體大小完全一致"""
+    text_capacity = sum(2 if ord(c) > 127 else 1 for c in text)
+    width = int(max(text_capacity * (font_size * 0.6) + 30, 320))
+    height = int(font_size * 1.6)
+    
+    safe_text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    
+    svg_code = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
+        <text x="5" y="{font_size * 1.1}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="{font_size}px" font-weight="500" fill="#374151">{safe_text}</text>
+    </svg>'''
+    
+    b64 = base64.b64encode(svg_code.encode('utf-8')).decode('utf-8')
+    return f'<img src="data:image/svg+xml;base64,{b64}" style="vertical-align: middle; display: inline-block; margin: 2px 0;" />'
+
+def inject_anti_cheat_script():
+    st.markdown(
+        """
+        <script>
+            document.documentElement.setAttribute('translate', 'no');
+            document.documentElement.classList.add('notranslate');
+            if (document.body) {
+                document.body.setAttribute('translate', 'no');
+                document.body.classList.add('notranslate');
+            }
+            document.addEventListener('contextmenu', event => event.preventDefault());
+            document.addEventListener('copy', event => event.preventDefault());
+            document.addEventListener('cut', event => event.preventDefault());
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && (e.key === 'c' || e.key === 'C' || e.key === 'x' || e.key === 'X' || 
+                                  e.key === 'a' || e.key === 'A' || e.key === 'u' || e.key === 'U' || 
+                                  e.key === 's' || e.key === 'S')) {
+                    e.preventDefault();
+                }
+                if (e.keyCode === 123) e.preventDefault();
+            });
+        </script>
+        <style>
+            * {
+                -webkit-user-select: none !important;
+                -moz-user-select: none !important;
+                -ms-user-select: none !important;
+                user-select: none !important;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 # =========================================================================
 # ⚙️ 3. 頁面設定與路由判斷
 # =========================================================================
