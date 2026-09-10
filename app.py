@@ -459,7 +459,7 @@ init_sqlite_db()
 # =========================================================================
 def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 500) -> str:
     text = text.replace("\n", " ")
-    
+    lines_input = text.split("\n")
     
     lines = []
     max_capacity = max_chars_per_line * 2 
