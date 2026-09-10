@@ -454,18 +454,23 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
 
 init_sqlite_db()
 
+import textwrap
+
 # =========================================================================
-# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (完整修正版)
+# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (終極完美換行版)
 # =========================================================================
-def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 500) -> str:
-    # 將所有內建的換行符號轉成空白，讓整段文字變成同一行
+def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 65) -> str:
+    # 1. 清理多餘空白與換行
     clean_text = " ".join(text.replace("\n", " ").split())
     
-    lines = [clean_text]  # 強制只保留為「單行」
-    
+    # 2. 使用 Python 內建的 textwrap 完美依單字長度自動斷行，絕不超出邊界
+    lines = textwrap.wrap(clean_text, width=max_chars_per_line)
+    if not lines:
+        lines = [clean_text]
+        
     line_height = font_size * 1.5
     svg_height = int(len(lines) * line_height + 20)
-    svg_width = 1200  # 拉大畫布寬度，確保長句子絕對不會被擠壓
+    svg_width = 950  # 設定適中的安全畫布寬度
     
     tspan_elements = ""
     for idx, line in enumerate(lines):
