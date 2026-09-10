@@ -459,11 +459,9 @@ import textwrap
 # =========================================================================
 # 🛡️ 2. SVG 向量圖像化與防偷看腳本 (強制指定字數斷行版)
 # =========================================================================
-def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 45) -> str:
-    # 1. 清理多餘空白與強制換行
+def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 50) -> str:
     clean_text = " ".join(text.replace("\n", " ").split())
     
-    # 2. 限制每行最大字數，確保絕對不會超出畫面
     lines = []
     for i in range(0, len(clean_text), max_chars_per_line):
         lines.append(clean_text[i:i + max_chars_per_line])
@@ -472,22 +470,23 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
         lines = [clean_text]
         
     line_height = font_size * 1.5
-    svg_height = int(len(lines) * line_height + 20)
+    svg_height = int(len(lines) * line_height + 15)
     
     tspan_elements = ""
     for idx, line in enumerate(lines):
         y_pos = int((idx + 1) * line_height)
         safe_line = line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        tspan_elements += f'<tspan x="10" y="{y_pos}">{safe_line}</tspan>'
+        # 將 x 軸微調至 5，確保首字（如 M）絕對不會被切到
+        tspan_elements += f'<tspan x="5" y="{y_pos}">{safe_line}</tspan>'
         
-    svg_code = f'''<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="{svg_height}" viewBox="0 0 950 {svg_height}">
+    svg_code = f'''<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="{svg_height}" viewBox="0 0 850 {svg_height}">
         <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="{font_size}px" font-weight="600" fill="#111827">
             {tspan_elements}
         </text>
     </svg>'''
     
     b64 = base64.b64encode(svg_code.encode('utf-8')).decode('utf-8')
-    return f'<img src="data:image/svg+xml;base64,{b64}" style="vertical-align: middle; display: block; margin: 8px 0; width: 100%; height: auto;" />'
+    return f'<img src="data:image/svg+xml;base64,{b64}" style="display: block; width: 100%; height: auto; margin: 4px 0;" />'
     
 def option_to_svg(text: str, font_size: int = 20) -> str:
     """選項統一設定為 font_size=20，讓英文與數學選項字體大小完全一致"""
