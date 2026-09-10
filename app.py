@@ -455,9 +455,9 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
 init_sqlite_db()
 
 # =========================================================================
-# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (已修正：固定寬度以確保字體大小 100% 一致)
+# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (已修正：調降每行最大字元數以防文字被切掉)
 # =========================================================================
-def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 45) -> str:
+def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 32) -> str:
     lines_input = text.split("\n")
     lines = []
     max_capacity = max_chars_per_line * 2 
@@ -503,9 +503,7 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
             
     line_height = font_size * 1.5
     svg_height = int(len(lines) * line_height + 20)
-    
-    # 💡 關鍵修正：固定 SVG 畫布寬度為 720，確保所有題目使用相同的比例縮放，字體大小絕對一致！
-    svg_width = 720
+    svg_width = 720  # 固定畫布寬度確保字體大小一致
     
     tspan_elements = ""
     for idx, line in enumerate(lines):
