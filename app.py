@@ -455,9 +455,9 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
 init_sqlite_db()
 
 # =========================================================================
-# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (已修正：擴大畫布並縮減每行字數，解決英文被切掉問題)
+# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (已修正：大幅擴增畫布至 1000 並縮減每行字數，徹底杜絕切字)
 # =========================================================================
-def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 22) -> str:
+def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 18) -> str:
     lines_input = text.split("\n")
     lines = []
     max_capacity = max_chars_per_line * 2 
@@ -503,7 +503,7 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
             
     line_height = font_size * 1.5
     svg_height = int(len(lines) * line_height + 20)
-    svg_width = 850  # 擴大畫布寬度，提供更多安全邊距
+    svg_width = 1000  # 大幅擴增畫布寬度，提供極寬的安全邊距
     
     tspan_elements = ""
     for idx, line in enumerate(lines):
