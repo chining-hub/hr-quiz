@@ -6,7 +6,7 @@ import base64
 import json
 import os
 import urllib.request
-import textwrap
+import re  # 新增正則表達式庫
 from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
 
@@ -456,10 +456,14 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
 init_sqlite_db()
 
 # =========================================================================
-# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (智慧型防護與矩陣對齊版)
+# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (全新視覺動態斷行版)
 # =========================================================================
-def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 42) -> str:
-    # 1. 依照原本題目中的 \n 分割，完整保留手動換行
+def text_to_multiline_svg(text: str, font_size: int = 22, max_svg_width: int = 820) -> str:
+    """
+    全新智慧斷行機制：
+    不再依賴不準確的字元長度 (textwrap)，而是即時計算文字視覺寬度 (中文字大約=2倍英文字)。
+    完美保留手動換行、矩陣縮排空白，並將文字填滿版面邊界後才換行。
+    """
     raw_paragraphs = text.split("\n")
     lines = []
     
@@ -468,31 +472,60 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
             lines.append("")
             continue
         
-        # 2. 關鍵修正：若該行包含矩陣符號（如 [ ]）或含有連續空白（用於對齊），直接保留原樣不進行自動斷行
-        if "[" in para or "]" in para or "  " in para:
-            lines.append(para)
-            continue
+        current_line = ""
+        current_width = 0
         
-        # 3. 針對一般文字進行智慧型斷行，確保英文單字不被切斷，且不刪除空白
-        wrapped_lines = textwrap.wrap(
-            para, 
-            width=max_chars_per_line, 
-            break_long_words=False, 
-            drop_whitespace=False,
-            replace_whitespace=False
-        )
-        if wrapped_lines:
-            lines.extend(wrapped_lines)
-        else:
-            lines.append(para)
+        # 依空格精確切割，以便於保留排版用的連續空白與英文單字完整性
+        tokens = re.split(r'( )', para)
         
+        for token in tokens:
+            if not token:
+                continue
+                
+            # 判斷寬度：若是全形/中文以 1.0 計算，半形/英數以 0.55 計算
+            token_w = sum(font_size if ord(c) > 127 else font_size * 0.55 for c in token)
+            
+            if token == " ":
+                if current_width + token_w > max_svg_width:
+                    # 如果加上空白超過邊界，代表剛好要在這換行，把空白丟棄
+                    lines.append(current_line)
+                    current_line = ""
+                    current_width = 0
+                else:
+                    current_line += token
+                    current_width += token_w
+            else:
+                if token_w > max_svg_width:
+                    # 情況A：遇到非常長的一串字（例如純中文長句，中間無空格），則需要逐字截斷
+                    for char in token:
+                        char_w = font_size if ord(char) > 127 else font_size * 0.55
+                        if current_width + char_w > max_svg_width:
+                            lines.append(current_line)
+                            current_line = char
+                            current_width = char_w
+                        else:
+                            current_line += char
+                            current_width += char_w
+                else:
+                    # 情況B：正常英文單字或短詞，若加上去超過邊界，則將整個單字推到下一行
+                    if current_width + token_w > max_svg_width:
+                        lines.append(current_line)
+                        current_line = token
+                        current_width = token_w
+                    else:
+                        current_line += token
+                        current_width += token_w
+                        
+        if current_line:
+            lines.append(current_line)
+            
     line_height = font_size * 1.5
     svg_height = int(len(lines) * line_height + 20)
     
     tspan_elements = ""
     for idx, line in enumerate(lines):
         y_pos = int((idx + 1) * line_height)
-        # 4. 將特殊符號轉義，並將空白轉為 SVG 支援的 &#160; 以完整保留矩陣與縮排對齊格式
+        # 特殊符號轉義，並將空白轉為 SVG 支援的 &#160; 完整保留矩陣與對齊
         safe_line = (
             line.replace("&", "&amp;")
                 .replace("<", "&lt;")
@@ -634,13 +667,13 @@ if current_test_id:
 
             if exam_type == "英文測驗":
                 if current_idx == 0:
-                    st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_chars_per_line=100), unsafe_allow_html=True)
+                    st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_svg_width=820), unsafe_allow_html=True)
                     st.divider()
                 elif current_idx == 13:
-                    st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=100), unsafe_allow_html=True)
+                    st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_svg_width=820), unsafe_allow_html=True)
                     st.divider()
             elif exam_type == "數學測驗" and current_idx == 0:
-                st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_chars_per_line=100), unsafe_allow_html=True)
+                st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_svg_width=820), unsafe_allow_html=True)
                 st.divider()
 
             q_item = current_quiz_data[current_idx]
@@ -659,7 +692,7 @@ if current_test_id:
                     elif img_key == "attachment2":
                         display_quiz_image("題目2.png", "[附件二] Yearly Consumption of Animal Products")
 
-                st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=55), unsafe_allow_html=True)
+                st.markdown(text_to_multiline_svg(q_text, font_size=22, max_svg_width=820), unsafe_allow_html=True)
                 
                 # 選項使用乾淨的 div 條列排版，避免 Markdown 列表解析錯亂
                 opts_html = "".join([f"<div style='margin: 8px 0;'><b>{k})</b> {option_to_svg(v, font_size=20)}</div>" for k, v in opts.items()])
