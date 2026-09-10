@@ -461,11 +461,13 @@ init_sqlite_db()
 def text_to_multiline_svg(text: str, font_size: int = 22, max_svg_width: int = 820) -> str:
     """
     全新智慧斷行機制：
-    不再依賴不準確的字元長度 (textwrap)，而是即時計算文字視覺寬度 (中文字大約=2倍英文字)。
-    完美保留手動換行、矩陣縮排空白，並將文字填滿版面邊界後才換行。
+    不再依賴不準確的字元長度 (textwrap)，而是即時計算文字視覺寬度。
     """
     raw_paragraphs = text.split("\n")
     lines = []
+    
+    # 這裡可以微調！越小代表英文越晚換行 (原本是 0.55，現改為 0.42)
+    EN_WIDTH_RATIO = 0.42 
     
     for para in raw_paragraphs:
         if not para.strip():
@@ -482,8 +484,8 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_svg_width: int = 8
             if not token:
                 continue
                 
-            # 判斷寬度：若是全形/中文以 1.0 計算，半形/英數以 0.55 計算
-            token_w = sum(font_size if ord(c) > 127 else font_size * 0.55 for c in token)
+            # 判斷寬度：若是全形/中文以 1.0 計算，半形/英數以 EN_WIDTH_RATIO 計算
+            token_w = sum(font_size if ord(c) > 127 else font_size * EN_WIDTH_RATIO for c in token)
             
             if token == " ":
                 if current_width + token_w > max_svg_width:
@@ -498,7 +500,7 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_svg_width: int = 8
                 if token_w > max_svg_width:
                     # 情況A：遇到非常長的一串字（例如純中文長句，中間無空格），則需要逐字截斷
                     for char in token:
-                        char_w = font_size if ord(char) > 127 else font_size * 0.55
+                        char_w = font_size if ord(char) > 127 else font_size * EN_WIDTH_RATIO
                         if current_width + char_w > max_svg_width:
                             lines.append(current_line)
                             current_line = char
