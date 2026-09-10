@@ -190,163 +190,163 @@ MATH_QUIZ_DATA = [
     {
         "id": "mq1",
         "question": "1. 2，2，4，12，    ，240",
-        "options": {" A": "24", "B": "84", "C": "32", "D": "48", "E": "120"},
+        "options": {"A": "24", "B": "84", "C": "32", "D": "48", "E": "120"},
         "answer": "D"
     },
     {
         "id": "mq2",
         "question": "2. 27，9，18，6，12，    ，8",
-        "options": {" A": "3", "B": "6", "C": "4", "D": "12", "E": "8"},
+        "options": {"A": "3", "B": "6", "C": "4", "D": "12", "E": "8"},
         "answer": "C"
     },
     {
         "id": "mq3",
         "question": "3. 某次數學測驗中，試題共有50題，答對一題給2分，答錯一題倒扣1分，沒有做答的不給分，某生答對42題，答錯4題，有4題未答，則此生得多少分？",
-        "options": {" A": "76", "B": "78", "C": "80", "D": "82", "E": "84"},
+        "options": {"A": "76", "B": "78", "C": "80", "D": "82", "E": "84"},
         "answer": "C"
     },
     {
         "id": "mq4",
         "question": "4. 某一牧場共有牛、羊、馬共1300隻，已知牛的數量恰為馬的數量75%，而羊的數量為牛的數量2倍，則請問牛有多少隻？",
-        "options": {" A": "200", "B": "300", "C": "400", "D": "600", "E": "800"},
+        "options": {"A": "200", "B": "300", "C": "400", "D": "600", "E": "800"},
         "answer": "B"
     },
     {
         "id": "mq5",
         "question": "5. 在一條路的兩旁種樹，每隔4公尺種樹一棵，共種200棵，請問此條路長多少公尺？",
-        "options": {" A": "800", "B": "792", "C": "400", "D": "396", "E": "404"},
+        "options": {"A": "800", "B": "792", "C": "400", "D": "396", "E": "404"},
         "answer": "D"
     },
     {
         "id": "mq6",
         "question": "6. 已知某個水池，每秒鐘流出8公升的水，每秒鐘流入10公升的水；1分半鐘以後，池中有水200公升，池中原來有水多少公升？",
-        "options": {" A": "20", "B": "40", "C": "60", "D": "80", "E": "100"},
+        "options": {"A": "20", "B": "40", "C": "60", "D": "80", "E": "100"},
         "answer": "A"
     },
     {
         "id": "mq7",
         "question": "7. 甲乙兩杯糖水，甲杯濃度為18%，乙杯為14%；若在現要調配出16%的糖水，則甲乙兩杯糖水取用的比例為多少？",
-        "options": {" A": "1:1", "B": "1:2", "C": "1:3", "D": "2:3", "E": "1:4"},
+        "options": {"A": "1:1", "B": "1:2", "C": "1:3", "D": "2:3", "E": "1:4"},
         "answer": "A"
     },
     {
         "id": "mq8",
         "question": "8. 某家便利商店推出特賣商品，每賣出一件可獲利60元。已知其成本為特價的7折，則請問特價為多少元？",
-        "options": {" A": "100", "B": "140", "C": "150", "D": "180", "E": "200"},
+        "options": {"A": "100", "B": "140", "C": "150", "D": "180", "E": "200"},
         "answer": "E"
     },
     {
         "id": "mq9",
         "question": "9. 若正方形各邊長減少10%時，則其面積減少多少？",
-        "options": {" A": "1%", "B": "10%", "C": "15%", "D": "19%", "E": "20%"},
+        "options": {"A": "1%", "B": "10%", "C": "15%", "D": "19%", "E": "20%"},
         "answer": "D"
     },
     {
         "id": "mq10",
         "question": "10. 同樣的物品，甲店的定價為1,300，乙店為1,350元，丙店為1,600元，但甲店打9折，乙店打75折，丙店打雙8折，則賣價最低的是那一家？",
-        "options": {" A": "甲", "B": "乙", "C": "丙", "D": "甲乙一樣低", "E": "三家一樣低"},
+        "options": {"A": "甲", "B": "乙", "C": "丙", "D": "甲乙一樣低", "E": "三家一樣低"},
         "answer": "B"
     },
     {
         "id": "mq11",
         "question": "11. 甲乙丙三個兄弟，每個兄弟各有三個妹妺，請問這家共有幾個兄弟姐妹？",
-        "options": {" A": "3", "B": "4", "C": "6", "D": "9", "E": "12"},
+        "options": {"A": "3", "B": "4", "C": "6", "D": "9", "E": "12"},
         "answer": "C"
     },
     {
         "id": "mq12",
         "question": "12. 一邊長各為6公分的正方體，六面皆塗上顏料後，再將各邊長三等分，切成長寬高各為2公分的小立方體，請問這些小立方體中，六面皆未塗上顏料的有幾個？",
-        "options": {" A": "1", "B": "2", "C": "3", "D": "4", "E": "5"},
+        "options": {"A": "1", "B": "2", "C": "3", "D": "4", "E": "5"},
         "answer": "A"
     },
     {
         "id": "mq13",
         "question": "13. 屋內有一群男女生，男生眼中所見「男3倍於女」，女生眼中所見「男5倍於女」，請問男生有幾人？",
-        "options": {" A": "3", "B": "5", "C": "9", "D": "10", "E": "12"},
+        "options": {"A": "3", "B": "5", "C": "9", "D": "10", "E": "12"},
         "answer": "C"
     },
     {
         "id": "mq14",
         "question": "14. 某布店繪製一張圓形圖，表明銷售各種布料之比例；其中卡其布的銷售佔總銷售量的5%，請問在圓形圖上應佔多少度的面積？",
-        "options": {" A": "5", "B": "9", "C": "15", "D": "18", "E": "36"},
+        "options": {"A": "5", "B": "9", "C": "15", "D": "18", "E": "36"},
         "answer": "D"
     },
     {
         "id": "mq15",
         "question": "15. 有一列火車全長90公尺，時速為90km/hr，現在要通過一座橋，橋長60公尺，則請問當火車剛通過橋頭，到火車尾離開橋尾，總共需花費多少分鐘？",
-        "options": {" A": "0.1", "B": "0.5", "C": "1", "D": "1.5", "E": "2"},
+        "options": {"A": "0.1", "B": "0.5", "C": "1", "D": "1.5", "E": "2"},
         "answer": "A"
     },
     {
         "id": "mq16",
         "question": "16. 一件工作，甲獨做24日完成，乙獨做36日完成，丙獨作18日完成，則三人合作要幾天才能完成？",
-        "options": {" A": "7", "B": "8", "C": "9", "D": "12", "E": "18"},
+        "options": {"A": "7", "B": "8", "C": "9", "D": "12", "E": "18"},
         "answer": "B"
     },
     {
         "id": "mq17",
         "question": "17. 已知小美年齡與老公大華的年齡比為3：4，且小美年紀比大華小9歲，則請問2人明年的年齡和為多少歲？",
-        "options": {" A": "55", "B": "57", "C": "63", "D": "65", "E": "67"},
+        "options": {"A": "55", "B": "57", "C": "63", "D": "65", "E": "67"},
         "answer": "D"
     },
     {
         "id": "mq18",
         "question": "18. 有一個二位數，已知個位數字和十位數字和為11，若將個位數數字和十位數數字交換，可得一個新的二位數，此新二位數為原來的二位數之2倍多7；請問此新二位數為多少？",
-        "options": {" A": "38", "B": "83", "C": "56", "D": "65", "E": "74"},
+        "options": {"A": "38", "B": "83", "C": "56", "D": "65", "E": "74"},
         "answer": "B"
     },
     {
         "id": "mq19",
         "question": "19. 一群獵人在小屋裡開會，身旁皆會跟著自己帶來的獵狗；已知屋內共有28個頭，96條腿，請問屋內共有幾隻獵狗？",
-        "options": {" A": "8", "B": "12", "C": "16", "D": "20", "E": "24"},
+        "options": {"A": "8", "B": "12", "C": "16", "D": "20", "E": "24"},
         "answer": "D"
     },
     {
         "id": "mq20",
         "question": "20. (題組20-21) 有甲、乙、丙共3位月薪資不同之員工，已知：(1) 甲的75%等於乙的57% (2) 甲的75%等於丙的45%。請問誰的月薪最高？",
-        "options": {" A": "甲", "B": "乙", "C": "丙"},
+        "options": {"A": "甲", "B": "乙", "C": "丙"},
         "answer": "C"
     },
     {
         "id": "mq21",
         "question": "21. (題組20-21) 承上題，請問誰的月薪最低？",
-        "options": {" A": "甲", "B": "乙", "C": "丙"},
+        "options": {"A": "甲", "B": "乙", "C": "丙"},
         "answer": "B"
     },
     {
         "id": "mq22",
         "question": "22. (題組22-23) 小明有一個哥哥、一個弟弟和一個妹妺，已知：(1)3年前哥哥的年紀是弟弟年紀的3倍 (2)2年後哥哥的年紀是弟弟年紀的2倍 (3)弟弟和妹妹年紀相差1歲 (4)2年前小明的年紀是弟弟的2倍 (5)明年小明的年紀是妹妹的2倍少1歲。請問小明今年幾歲？",
-        "options": {" A": "8", "B": "10", "C": "12", "D": "14", "E": "16"},
+        "options": {"A": "8", "B": "10", "C": "12", "D": "14", "E": "16"},
         "answer": "C"
     },
     {
         "id": "mq23",
         "question": "23. (題組22-23) 承上題，請問幾年後，哥哥年紀是妹妺的2倍？",
-        "options": {" A": "2", "B": "3", "C": "4", "D": "5", "E": "6"},
+        "options": {"A": "2", "B": "3", "C": "4", "D": "5", "E": "6"},
         "answer": "D"
     },
     {
         "id": "mq24",
         "question": "24. (題組24-25) 在九宮格中，任何直的三位數字相加等於橫的三位數字相加，也等於斜的三位數字相加。\n已知矩陣為：\n[ 18,  X,  Y  ]\n[  M, 15,  N ]\n[  Z, 19, 12  ]\n請問 X = ？",
-        "options": {" A": "16", "B": "18", "C": "14", "D": "12", "E": "11"},
+        "options": {"A": "16", "B": "18", "C": "14", "D": "12", "E": "11"},
         "answer": "E"
     },
     {
         "id": "mq25",
         "question": "25. (題組24-25) 承上題，請問 N = ？",
-        "options": {" A": "14", "B": "15", "C": "16", "D": "17", "E": "18"},
+        "options": {"A": "14", "B": "15", "C": "16", "D": "17", "E": "18"},
         "answer": "D"
     },
     {
         "id": "mq26",
         "question": "26. (題組26-27) 某次小考，老師出了2題數學題目，班上同學一共40人，第一題答對者有10人，第二題答對者有26人，但零分者有6人。請問考滿分100分者，有幾個人？",
-        "options": {" A": "0", "B": "2", "C": "3", "D": "4", "E": "6"},
+        "options": {"A": "0", "B": "2", "C": "3", "D": "4", "E": "6"},
         "answer": "B"
     },
     {
         "id": "mq27",
         "question": "27. (題組26-27) 承上題，請問只答對一題者，有幾個人？",
-        "options": {" A": "26", "B": "28", "C": "30", "D": "32", "E": "36"},
+        "options": {"A": "26", "B": "28", "C": "30", "D": "32", "E": "36"},
         "answer": "D"
     }
 ]
@@ -455,9 +455,9 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
 init_sqlite_db()
 
 # =========================================================================
-# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (字型大小已全面統一)
+# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (已修正：固定寬度以確保字體大小 100% 一致)
 # =========================================================================
-def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 50) -> str:
+def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 45) -> str:
     lines_input = text.split("\n")
     lines = []
     max_capacity = max_chars_per_line * 2 
@@ -502,16 +502,10 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
             lines.append(current_line)
             
     line_height = font_size * 1.5
-    svg_height = int(len(lines) * line_height + 15)
+    svg_height = int(len(lines) * line_height + 20)
     
-    max_line_width = 0
-    for line in lines:
-        line_capacity = sum(2 if ord(c) > 127 else 1 for c in line)
-        w = line_capacity * (font_size * 0.55)
-        if w > max_line_width:
-            max_line_width = w
-            
-    svg_width = int(max(720, max_line_width + 40)) 
+    # 💡 關鍵修正：固定 SVG 畫布寬度為 720，確保所有題目使用相同的比例縮放，字體大小絕對一致！
+    svg_width = 720
     
     tspan_elements = ""
     for idx, line in enumerate(lines):
@@ -526,7 +520,7 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
     </svg>'''
     
     b64 = base64.b64encode(svg_code.encode('utf-8')).decode('utf-8')
-    return f'<img src="data:image/svg+xml;base64,{b64}" style="vertical-align: middle; display: block; margin: 8px 0; max-width: 100%; height: auto;" />'
+    return f'<img src="data:image/svg+xml;base64,{b64}" style="vertical-align: middle; display: block; margin: 8px 0; width: 100%; height: auto;" />'
 
 def option_to_svg(text: str, font_size: int = 20) -> str:
     """選項統一設定為 font_size=20，讓英文與數學選項字體大小完全一致"""
@@ -652,13 +646,13 @@ if current_test_id:
 
             if exam_type == "英文測驗":
                 if current_idx == 0:
-                    st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
+                    st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_chars_per_line=50), unsafe_allow_html=True)
                     st.divider()
                 elif current_idx == 13:
-                    st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
+                    st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=50), unsafe_allow_html=True)
                     st.divider()
             elif exam_type == "數學測驗" and current_idx == 0:
-                st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_chars_per_line=60), unsafe_allow_html=True)
+                st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_chars_per_line=50), unsafe_allow_html=True)
                 st.divider()
 
             q_item = current_quiz_data[current_idx]
@@ -677,7 +671,7 @@ if current_test_id:
                     elif img_key == "attachment2":
                         display_quiz_image("題目2.png", "[附件二] Yearly Consumption of Animal Products")
 
-                st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=50), unsafe_allow_html=True)
+                st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=45), unsafe_allow_html=True)
                 
                 # 選項統一使用 font_size=20 進行渲染
                 opts_html = "".join([f"* **{k})** {option_to_svg(v, font_size=20)}<br/>" for k, v in opts.items()])
