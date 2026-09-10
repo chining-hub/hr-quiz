@@ -613,13 +613,13 @@ if current_test_id:
 
             if exam_type == "英文測驗":
                 if current_idx == 0:
-                    st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_chars_per_line=30), unsafe_allow_html=True)
+                    st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_chars_per_line=100), unsafe_allow_html=True)
                     st.divider()
                 elif current_idx == 13:
-                    st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=30), unsafe_allow_html=True)
+                    st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=100), unsafe_allow_html=True)
                     st.divider()
             elif exam_type == "數學測驗" and current_idx == 0:
-                st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_chars_per_line=30), unsafe_allow_html=True)
+                st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_chars_per_line=100), unsafe_allow_html=True)
                 st.divider()
 
             q_item = current_quiz_data[current_idx]
@@ -638,7 +638,7 @@ if current_test_id:
                     elif img_key == "attachment2":
                         display_quiz_image("題目2.png", "[附件二] Yearly Consumption of Animal Products")
 
-                st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=18), unsafe_allow_html=True)
+                st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=100), unsafe_allow_html=True)
                 
                 # 選項統一使用 font_size=20 進行渲染
                 opts_html = "".join([f"* **{k})** {option_to_svg(v, font_size=20)}<br/>" for k, v in opts.items()])
