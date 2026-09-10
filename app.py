@@ -455,7 +455,7 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
 init_sqlite_db()
 
 # =========================================================================
-# 🛡️ 2. SVG 向量圖像化與防偷看腳本
+# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (字型大小已全面統一)
 # =========================================================================
 def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 50) -> str:
     lines_input = text.split("\n")
@@ -529,6 +529,7 @@ def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: in
     return f'<img src="data:image/svg+xml;base64,{b64}" style="vertical-align: middle; display: block; margin: 8px 0; max-width: 100%; height: auto;" />'
 
 def option_to_svg(text: str, font_size: int = 20) -> str:
+    """選項統一設定為 font_size=20，讓英文與數學選項字體大小完全一致"""
     text_capacity = sum(2 if ord(c) > 127 else 1 for c in text)
     width = int(max(text_capacity * (font_size * 0.6) + 30, 320))
     height = int(font_size * 1.6)
@@ -678,10 +679,8 @@ if current_test_id:
 
                 st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=50), unsafe_allow_html=True)
                 
-                if exam_type == "英文測驗":
-                    opts_html = "".join([f"* **{k})** {option_to_svg(v, font_size=20)}<br/>" for k, v in opts.items()])
-                else:
-                    opts_html = "".join([f"* **({k})** {option_to_svg(v, font_size=18)}<br/>" for k, v in opts.items()])
+                # 選項統一使用 font_size=20 進行渲染
+                opts_html = "".join([f"* **{k})** {option_to_svg(v, font_size=20)}<br/>" for k, v in opts.items()])
                 st.markdown(opts_html, unsafe_allow_html=True)
 
                 opts_keys = list(opts.keys())
