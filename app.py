@@ -6,6 +6,7 @@ import base64
 import json
 import os
 import urllib.request
+import textwrap
 from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
 
@@ -454,29 +455,44 @@ def mark_test_completed_and_save_result(test_id, name, dept, exam_type, score, d
 
 init_sqlite_db()
 
-import textwrap
-
 # =========================================================================
-# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (強制指定字數斷行版)
+# 🛡️ 2. SVG 向量圖像化與防偷看腳本 (智慧型斷行版 - 保留 \n 與空白)
 # =========================================================================
-def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 50) -> str:
-    clean_text = " ".join(text.replace("\n", " ").split())
-    
+def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 55) -> str:
+    # 1. 依照原本題目中的 \n 分割，完整保留手動換行（如數學矩陣、題組結構）
+    raw_paragraphs = text.split("\n")
     lines = []
-    for i in range(0, len(clean_text), max_chars_per_line):
-        lines.append(clean_text[i:i + max_chars_per_line])
+    
+    for para in raw_paragraphs:
+        if not para.strip():
+            lines.append("")
+            continue
         
-    if not lines:
-        lines = [clean_text]
+        # 2. 使用 textwrap 進行智慧型斷行，不強行切斷英文單字
+        wrapped_lines = textwrap.wrap(
+            para, 
+            width=max_chars_per_line, 
+            break_long_words=False, 
+            replace_whitespace=False
+        )
+        if wrapped_lines:
+            lines.extend(wrapped_lines)
+        else:
+            lines.append(para)
         
     line_height = font_size * 1.5
-    svg_height = int(len(lines) * line_height + 15)
+    svg_height = int(len(lines) * line_height + 20)
     
     tspan_elements = ""
     for idx, line in enumerate(lines):
         y_pos = int((idx + 1) * line_height)
-        safe_line = line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        # 將 x 軸微調至 5，確保首字（如 M）絕對不會被切到
+        # 3. 將特殊符號轉義，並將空白轉為 SVG 支援的 &#160; 以保留矩陣對齊格式
+        safe_line = (
+            line.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace(" ", "&#160;")
+        )
         tspan_elements += f'<tspan x="5" y="{y_pos}">{safe_line}</tspan>'
         
     svg_code = f'''<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="{svg_height}" viewBox="0 0 850 {svg_height}">
@@ -536,6 +552,7 @@ def inject_anti_cheat_script():
         """,
         unsafe_allow_html=True
     )
+
 # =========================================================================
 # ⚙️ 3. 頁面設定與路由判斷
 # =========================================================================
@@ -636,9 +653,9 @@ if current_test_id:
                     elif img_key == "attachment2":
                         display_quiz_image("題目2.png", "[附件二] Yearly Consumption of Animal Products")
 
-                st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=50), unsafe_allow_html=True)
+                st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=55), unsafe_allow_html=True)
                 
-                # 選項統一使用 font_size=20 進行渲染
+                # 選項使用乾淨的 div 條列排版，避免 Markdown 列表解析錯亂
                 opts_html = "".join([f"<div style='margin: 8px 0;'><b>{k})</b> {option_to_svg(v, font_size=20)}</div>" for k, v in opts.items()])
                 st.markdown(opts_html, unsafe_allow_html=True)
 
