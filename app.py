@@ -458,7 +458,7 @@ init_sqlite_db()
 # =========================================================================
 # 🛡️ 2. SVG 向量圖像化與防偷看腳本 (智慧型斷行版 - 保留 \n 與空白)
 # =========================================================================
-def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 55) -> str:
+def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 100) -> str:
     # 1. 依照原本題目中的 \n 分割，完整保留手動換行（如數學矩陣、題組結構）
     raw_paragraphs = text.split("\n")
     lines = []
@@ -628,13 +628,13 @@ if current_test_id:
 
             if exam_type == "英文測驗":
                 if current_idx == 0:
-                    st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_chars_per_line=50), unsafe_allow_html=True)
+                    st.markdown(text_to_multiline_svg("PART 1. Vocabulary & Grammar Test (Q1-Q13)", font_size=24, max_chars_per_line=100), unsafe_allow_html=True)
                     st.divider()
                 elif current_idx == 13:
-                    st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=50), unsafe_allow_html=True)
+                    st.markdown(text_to_multiline_svg("PART 2. Reading Comprehension Test (Q14-Q17)", font_size=24, max_chars_per_line=100), unsafe_allow_html=True)
                     st.divider()
             elif exam_type == "數學測驗" and current_idx == 0:
-                st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_chars_per_line=50), unsafe_allow_html=True)
+                st.markdown(text_to_multiline_svg("數學邏輯能力測驗（共 27 題，每題 2.5 分）", font_size=24, max_chars_per_line=100), unsafe_allow_html=True)
                 st.divider()
 
             q_item = current_quiz_data[current_idx]
