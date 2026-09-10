@@ -639,7 +639,7 @@ if current_test_id:
                 st.markdown(text_to_multiline_svg(q_text, font_size=22, max_chars_per_line=50), unsafe_allow_html=True)
                 
                 # 選項統一使用 font_size=20 進行渲染
-                opts_html = "".join([f"* **{k})** {option_to_svg(v, font_size=20)}<br/>" for k, v in opts.items()])
+                opts_html = "".join([f"<div style='margin: 8px 0;'><b>{k})</b> {option_to_svg(v, font_size=20)}</div>" for k, v in opts.items()])
                 st.markdown(opts_html, unsafe_allow_html=True)
 
                 opts_keys = list(opts.keys())
