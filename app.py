@@ -457,9 +457,9 @@ init_sqlite_db()
 # =========================================================================
 # 🛡️ 2. SVG 向量圖像化與防偷看腳本 (已修正：恢復每行為 35 個字，解決文字擠在一起的問題)
 # =========================================================================
-def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 200) -> str:
+def text_to_multiline_svg(text: str, font_size: int = 22, max_chars_per_line: int = 500) -> str:
     text = text.replace("\n", " ")
-    lines_input = text.split("\n")
+    
     
     lines = []
     max_capacity = max_chars_per_line * 2 
