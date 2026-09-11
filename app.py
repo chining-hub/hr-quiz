@@ -476,23 +476,26 @@ if current_test_id:
                         
                         # 從雲端安全的 st.secrets 中讀取答案進行比對
                         secret_answers = st.secrets.get("answer_keys", {})
-                        
+
                         for idx, item in enumerate(current_quiz_data):
                             qid = item["id"]
                             c_ans = secret_answers.get(qid, "")
-                            u_ans = st.session_state.user_answers.get(qid, None)
+                            u_ans = st.session_state.user_answers.get(qid, None) # 取得使用者的答案，沒寫就是 None
+
+                        if exam_type == "英文測驗":
+                            q_score = 100.0 / len(current_quiz_data)
+                        else:
+                            q_score = 2.5
+                    
+                        # ✨ 核心邏輯：有作答且答對才加分；沒作答(u_ans為空)或答錯都會判定為 ❌
+                        if u_ans and u_ans == c_ans:
+                            score += q_score
+                            ans_records.append(f"Q{idx+1}:⭕ ({u_ans})")
+                        else:
+                            # 如果沒寫，顯示 (未作答)；如果寫錯了，顯示他選的答案
+                            display_ans = u_ans if u_ans else "未作答"
+                            ans_records.append(f"Q{idx+1}:❌ ({display_ans})")
                             
-                            if exam_type == "英文測驗":
-                                q_score = 100.0 / len(current_quiz_data)
-                            else:
-                                q_score = 2.5
-
-                            if u_ans == c_ans:
-                                score += q_score
-                                ans_records.append(f"Q{idx+1}:⭕ ({u_ans})")
-                            else:
-                                ans_records.append(f"Q{idx+1}:❌ ({u_ans})")
-
                         end_time = datetime.now()
                         duration_sec = int((end_time - st.session_state[start_key]).total_seconds())
                         
