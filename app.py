@@ -514,19 +514,45 @@ if current_test_id:
             st.balloons()
             st.success("🎉 測驗已順利完成！感謝您的配合。")
                 
+import hashlib
+
 # -------------------------------------------------------------------------
-# 🔀 情境 B：HR 管理後台
+# 🔀 情境 B：HR 管理後台（升級安全驗證與 Session 管理）
 # -------------------------------------------------------------------------
 else:
-    st.title("🏢 人資測評管理系統")
-    st.caption("請輸入 HR 管理員密碼以開啟管理功能")
-    
-    CORRECT_PASSWORD = st.secrets.get("HR_PASSWORD", "hr1234")
-    hr_password = st.text_input("HR 管理員密碼", type="password")
-    
-    if hr_password == CORRECT_PASSWORD:
-        st.success("身份驗證成功！")
+    # 初始化登入狀態
+    if "hr_logged_in" not in st.session_state:
+        st.session_state.hr_logged_in = False
+
+    # 若尚未登入，顯示登入畫面
+    if not st.session_state.hr_logged_in:
+        st.title("🏢 人資測評管理系統 - 登入")
+        st.caption("請輸入管理員密碼以存取後台")
         
+        with st.form("login_form"):
+            input_password = st.text_input("管理員密碼", type="password")
+            submit_login = st.form_submit_button("登入後台", type="primary")
+            
+            if submit_login:
+                # 讀取雲端密碼雜湊值並比對
+                stored_hash = st.secrets.get("HR_PASSWORD_HASH", "12631525d5757d59b4347710b70c302947d6e6a32d67d19154a444155fc92c0b")
+                input_hash = hashlib.sha256(input_password.encode()).hexdigest()
+                
+                if input_hash == stored_hash:
+                    st.session_state.hr_logged_in = True
+                    st.rerun()
+                else:
+                    st.error("❌ 密碼錯誤，請重新輸入！")
+                    
+    else:
+        # 已成功登入的管理員介面
+        st.title("🏢 人資測評管理系統 (管理員專區)")
+        
+        # 側邊欄提供安全登出按鈕
+        if st.sidebar.button("🔒 登出管理後台"):
+            st.session_state.hr_logged_in = False
+            st.rerun()
+            
         tab1, tab2 = st.tabs(["➕ 建立測驗連結", "📊 測驗紀錄與數據分析"])
         
         with tab1:
