@@ -529,7 +529,7 @@ else:
             submit_login = st.form_submit_button("登入後台", type="primary")
             
             if submit_login:
-                stored_hash = st.secrets.get("HR_PASSWORD_HASH", "12631525d5757d59b4347710b70c302947d6e6a32d67d19154a444155fc92c0b")
+                stored_hash = st.secrets.get("HR_PASSWORD_HASH", "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4")
                 input_hash = hashlib.sha256(input_password.encode()).hexdigest()
                 
                 if input_hash == stored_hash:
