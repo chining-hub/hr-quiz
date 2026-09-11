@@ -9,6 +9,7 @@ import urllib.request
 import re
 from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
+import hashlib
 
 # =========================================================================
 # 🎨 全域頁面設定與精緻 CSS 美化
@@ -480,19 +481,17 @@ if current_test_id:
                         for idx, item in enumerate(current_quiz_data):
                             qid = item["id"]
                             c_ans = secret_answers.get(qid, "")
-                            u_ans = st.session_state.user_answers.get(qid, None) # 取得使用者的答案，沒寫就是 None
+                            u_ans = st.session_state.user_answers.get(qid, None)
 
                         if exam_type == "英文測驗":
                             q_score = 100.0 / len(current_quiz_data)
                         else:
                             q_score = 2.5
                     
-                        # ✨ 核心邏輯：有作答且答對才加分；沒作答(u_ans為空)或答錯都會判定為 ❌
                         if u_ans and u_ans == c_ans:
                             score += q_score
                             ans_records.append(f"Q{idx+1}:⭕ ({u_ans})")
                         else:
-                            # 如果沒寫，顯示 (未作答)；如果寫錯了，顯示他選的答案
                             display_ans = u_ans if u_ans else "未作答"
                             ans_records.append(f"Q{idx+1}:❌ ({display_ans})")
                             
@@ -514,17 +513,13 @@ if current_test_id:
             st.balloons()
             st.success("🎉 測驗已順利完成！感謝您的配合。")
                 
-import hashlib
-
 # -------------------------------------------------------------------------
 # 🔀 情境 B：HR 管理後台（升級安全驗證與 Session 管理）
 # -------------------------------------------------------------------------
 else:
-    # 初始化登入狀態
     if "hr_logged_in" not in st.session_state:
         st.session_state.hr_logged_in = False
 
-    # 若尚未登入，顯示登入畫面
     if not st.session_state.hr_logged_in:
         st.title("🏢 人資測評管理系統 - 登入")
         st.caption("請輸入管理員密碼以存取後台")
@@ -534,7 +529,6 @@ else:
             submit_login = st.form_submit_button("登入後台", type="primary")
             
             if submit_login:
-                # 讀取雲端密碼雜湊值並比對
                 stored_hash = st.secrets.get("HR_PASSWORD_HASH", "12631525d5757d59b4347710b70c302947d6e6a32d67d19154a444155fc92c0b")
                 input_hash = hashlib.sha256(input_password.encode()).hexdigest()
                 
@@ -545,10 +539,8 @@ else:
                     st.error("❌ 密碼錯誤，請重新輸入！")
                     
     else:
-        # 已成功登入的管理員介面
         st.title("🏢 人資測評管理系統 (管理員專區)")
         
-        # 側邊欄提供安全登出按鈕
         if st.sidebar.button("🔒 登出管理後台"):
             st.session_state.hr_logged_in = False
             st.rerun()
@@ -589,6 +581,3 @@ else:
             df_results = pd.read_sql_query("SELECT * FROM results ORDER BY submit_time DESC", conn)
             st.dataframe(df_results, use_container_width=True)
             conn.close()
-                
-    elif hr_password:
-        st.error("密碼錯誤，請重新輸入！")
