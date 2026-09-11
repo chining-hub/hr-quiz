@@ -222,7 +222,7 @@ init_sqlite_db()
 def text_to_multiline_svg(text: str, font_size: int = 22, max_svg_width: int = 820) -> str:
     raw_paragraphs = text.split("\n")
     lines = []
-    EN_WIDTH_RATIO = 0.42 
+    EN_WIDTH_RATIO = 0.47 
     
     for para in raw_paragraphs:
         if not para.strip():
